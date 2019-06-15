@@ -65,7 +65,6 @@ class ConfigParser(object):
 		
 		# TODO: 2to3 conversion, check if ascii is the right encoding or if Haiku uses utf-8
 		# line 126 suggests that it is utf-8
-		output_str = output.decode('utf-8')
 		lines = output_str.splitlines()
 		for line in lines:
 			## REFACTOR into a testable method that can parse a single line
