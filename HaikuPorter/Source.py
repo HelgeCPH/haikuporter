@@ -344,25 +344,25 @@ class Source(object):
 				if getOption('noGitRepo'):
 					info('Applying patch(set) "%s" ...' % patch)
 					output = check_output(['patch', '--ignore-whitespace', '-p1', '-i',
-								patch], cwd=self.sourceDir)
+								patch], cwd=self.sourceDir).decode('utf-8')
 					info(output)
 				else:
 					if patch.endswith('.patchset'):
 						info('Applying patchset "%s" ...' % patch)
 						output = check_output(['git', 'am', '--ignore-whitespace', '-3',
 									'--keep-cr', patch], cwd=self.sourceDir,
-								   env=self.gitEnv)
+								   env=self.gitEnv).decode('utf-8')
 						info(output)
 					else:
 						info('Applying patch "%s" ...' % patch)
 						output = check_output(['git', 'apply', '--ignore-whitespace',
 									'-p1', '--index', patch],
-									cwd=self.sourceDir)
+									cwd=self.sourceDir).decode('utf-8')
 						info(output)
 						output = check_output(['git', 'commit', '-q', '-m',
 									'applying patch %s'
 									% os.path.basename(patch)],
-								   cwd=self.sourceDir, env=self.gitEnv)
+								   cwd=self.sourceDir, env=self.gitEnv).decode('utf-8')
 						info(output)
 				patched = True
 		except:
@@ -379,9 +379,9 @@ class Source(object):
 	def reset(self):
 		"""Reset source to original state"""
 
-		output = check_output(['git', 'reset', '--hard', 'ORIGIN'], cwd=self.sourceDir)
+		output = check_output(['git', 'reset', '--hard', 'ORIGIN'], cwd=self.sourceDir).decode('utf-8')
 		info(output)
-		output = check_output(['git', 'clean', '-f', '-d'], cwd=self.sourceDir)
+		output = check_output(['git', 'clean', '-f', '-d'], cwd=self.sourceDir).decode('utf-8')
 		info(output)
 
 	def commitPatchPhase(self):
@@ -389,7 +389,7 @@ class Source(object):
 
 		# see if there are any changes at all
 		changes = check_output(['git', 'status', '--porcelain'],
-							   cwd=self.sourceDir)
+							   cwd=self.sourceDir).decode('utf-8')
 		if not changes:
 			info("Patch function hasn't changed anything for "
 				  + self.fetchTargetName)
@@ -398,10 +398,10 @@ class Source(object):
 		info('Committing changes done in patch function for '
 			  + self.fetchTargetName)
 		output = check_output(['git', 'commit', '-a', '-q', '-m', 'patch function'],
-				   cwd=self.sourceDir, env=self.gitEnv)
+				   cwd=self.sourceDir, env=self.gitEnv).decode('utf-8')
 		info(output)
 		output = check_output(['git', 'tag', '-f', 'PATCH_FUNCTION', 'HEAD'],
-				   cwd=self.sourceDir)
+				   cwd=self.sourceDir).decode('utf-8')
 		info(output)
 
 	def extractPatchset(self, patchSetFilePath, archPatchSetFilePath):
@@ -500,16 +500,16 @@ class Source(object):
 		"""Import sources into git repository"""
 
 		ensureCommandIsAvailable('git')
-		info(check_output(['git', 'init'], cwd=self.sourceDir))
-		info(check_output(['git', 'config', 'gc.auto', '0'], cwd=self.sourceDir))
+		info(check_output(['git', 'init'], cwd=self.sourceDir).decode('utf-8'))
+		info(check_output(['git', 'config', 'gc.auto', '0'], cwd=self.sourceDir).decode('utf-8'))
 			# Disable automatic garbage collection. This works around an issue
 			# with git failing to do that with the haikuwebkit repository.
 		info(check_output(['git', 'symbolic-ref', 'HEAD', 'refs/heads/haikuport'],
-				   cwd=self.sourceDir))
-		info(check_output(['git', 'add', '-f', '.'], cwd=self.sourceDir))
+				   cwd=self.sourceDir).decode('utf-8'))
+		info(check_output(['git', 'add', '-f', '.'], cwd=self.sourceDir).decode('utf-8'))
 		info(check_output(['git', 'commit', '-m', 'import', '-q'],
-				   cwd=self.sourceDir, env=self.gitEnv))
-		info(check_output(['git', 'tag', 'ORIGIN'], cwd=self.sourceDir))
+				   cwd=self.sourceDir, env=self.gitEnv).decode('utf-8'))
+		info(check_output(['git', 'tag', 'ORIGIN'], cwd=self.sourceDir).decode('utf-8'))
 
 	def _isInGitWorkingDirectory(self, path):
 		"""Returns whether the given source directory path is in a git working

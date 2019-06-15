@@ -127,7 +127,7 @@ class BuildPlatformHaiku(BuildPlatform):
 		"""wraps invocation of 'finddir', uses caching"""
 		if which not in self.findDirectoryCache:
 			self.findDirectoryCache[which] \
-				= check_output(['/bin/finddir', which]).rstrip().decode('utf-8')  # drop newline
+				= check_output(['/bin/finddir', which]).decode('utf-8').rstrip()  # drop newline
 		return self.findDirectoryCache[which]
 
 	def resolveDependencies(self, dependencyInfoFiles, requiresTypes,
@@ -215,7 +215,7 @@ class BuildPlatformUnix(BuildPlatform):
 	def init(self, treePath, outputDirectory, packagesPath,
 			shallowInitIsEnough=False):
 		# get the machine triple from gcc
-		machine = check_output('gcc -dumpmachine', shell=True).strip()
+		machine = check_output('gcc -dumpmachine', shell=True).decode('utf-8').strip()
 
 		# When building in a linux32 environment gcc still says "x86_64", so we
 		# replace the architecture part of the machine triple with what uname()
@@ -577,7 +577,7 @@ class BuildPlatformUnix(BuildPlatform):
 			installPath = installRoot + '/' + installationLocation
 			args = [Configuration.getPackageCommand(), 'extract', '-C',
 				installPath, package]
-			output = check_output(args)
+			output = check_output(args).decode('utf-8')
 			info(output)
 		else:
 			installPath = packageInfo.installPath

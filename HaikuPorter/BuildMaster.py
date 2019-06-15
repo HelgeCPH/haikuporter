@@ -963,9 +963,9 @@ class BuildMaster(object):
 		try:
 			ensureCommandIsAvailable('git')
 			origin = subprocess.check_output(['git', 'remote', 'get-url',
-					'origin'], cwd=self.portsTreePath, stderr=subprocess.STDOUT)
+					'origin'], cwd=self.portsTreePath, stderr=subprocess.STDOUT).decode('utf-8')
 			head = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
-				cwd=self.portsTreePath, stderr=subprocess.STDOUT)
+				cwd=self.portsTreePath, stderr=subprocess.STDOUT).decode('utf-8')
 		except:
 			warn('unable to determine origin and revision of haikuports tree')
 			origin = '<unknown> '

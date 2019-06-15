@@ -61,7 +61,7 @@ def unpackCheckoutWithTar(checkoutDir, sourceBaseDir, sourceSubDir, foldSubDir):
 				   % (foldSubDir, sourceDir))
 	else:
 		command = 'tar -c --exclude-vcs . | tar -x -C "%s"' % sourceDir
-	output = check_output(command, cwd=checkoutDir, shell=True)
+	output = check_output(command, cwd=checkoutDir, shell=True).decode('utf-8')
 	info(output)
 
 	if foldSubDir:
@@ -128,7 +128,7 @@ class SourceFetcherForBazaar(object):
 		if self.rev:
 			command += ' -r ' + self.rev
 		command += ' ' + self.uri + ' ' + self.fetchTarget
-		output = check_output(command, shell=True, stderr=STDOUT)
+		output = check_output(command, shell=True, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):
@@ -172,7 +172,7 @@ class SourceFetcherForCvs(object):
 			else:
 				command += ' -r' + self.rev
 		command += ' "%s"' % self.module
-		output = check_output(command, shell=True, cwd=baseDir, stderr=STDOUT)
+		output = check_output(command, shell=True, cwd=baseDir, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):
@@ -253,7 +253,7 @@ class SourceFetcherForFossil(object):
 				   + ' && fossil open ' + fossilDir)
 		if self.rev:
 			command += ' ' + self.rev
-		output = check_output(command, shell=True, stderr=STDOUT)
+		output = check_output(command, shell=True, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):
@@ -285,7 +285,7 @@ class SourceFetcherForGit(object):
 
 		ensureCommandIsAvailable('git')
 		command = 'git clone --bare %s %s' % (self.uri, self.fetchTarget)
-		output = check_output(command, shell=True, stderr=STDOUT)
+		output = check_output(command, shell=True, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):
@@ -294,21 +294,21 @@ class SourceFetcherForGit(object):
 		self.rev = rev
 		command = 'git rev-list --max-count=1 %s &>/dev/null' % self.rev
 		try:
-			output = check_output(command, shell=True, cwd=self.fetchTarget)
+			output = check_output(command, shell=True, cwd=self.fetchTarget).decode('utf-8')
 			info(output)
 		except:
 			print('trying to fetch revision %s from upstream' % self.rev)
 			command = "git branch | cut -c3-"
 			branches = check_output(command, shell=True,
-									cwd=self.fetchTarget, stderr=STDOUT).splitlines()
+									cwd=self.fetchTarget, stderr=STDOUT).decode('utf-8').splitlines()
 			for branch in branches:
 				command = 'git fetch origin %s:%s' % (branch, branch)
 				print(command)
-				output = check_output(command, shell=True, cwd=self.fetchTarget)
+				output = check_output(command, shell=True, cwd=self.fetchTarget).decode('utf-8')
 				info(output)
 			# ensure that the revision really is available now
 			command = 'git rev-list --max-count=1 %s &>/dev/null' % self.rev
-			output = check_output(command, shell=True, cwd=self.fetchTarget)
+			output = check_output(command, shell=True, cwd=self.fetchTarget).decode('utf-8')
 			info(output)
 
 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
@@ -319,7 +319,7 @@ class SourceFetcherForGit(object):
 					   % (self.rev, foldSubDir, sourceDir))
 		else:
 			command = 'git archive %s | tar -x -C "%s"' % (self.rev, sourceDir)
-		output = check_output(command, shell=True, cwd=self.fetchTarget)
+		output = check_output(command, shell=True, cwd=self.fetchTarget).decode('utf-8')
 		info(output)
 
 		if foldSubDir:
@@ -369,7 +369,7 @@ class SourceFetcherForMercurial(object):
 		if self.rev:
 			command += ' -r ' + self.rev
 		command += ' ' + self.uri + ' ' + self.fetchTarget
-		output = check_output(command, shell=True, stderr=STDOUT)
+		output = check_output(command, shell=True, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):
@@ -387,7 +387,7 @@ class SourceFetcherForMercurial(object):
 				% (self.rev, foldSubDir, sourceDir)
 		else:
 			command = 'hg archive -r %s -t files "%s"' % (self.rev, sourceDir)
-		output = check_output(command, shell=True, cwd=self.fetchTarget)
+		output = check_output(command, shell=True, cwd=self.fetchTarget).decode('utf-8')
 		info(output)
 
 		if foldSubDir:
@@ -425,7 +425,7 @@ class SourceFetcherForSourcePackage(object):
 
 		output = check_output([Configuration.getPackageCommand(), 'extract',
 					'-C', sourceDir, self.sourcePackagePath,
-					relativeSourcePath], stderr=STDOUT)
+					relativeSourcePath], stderr=STDOUT).decode('utf-8')
 		info(output)
 		foldSubdirIntoSourceDir(relativeSourcePath, sourceDir)
 
@@ -448,7 +448,7 @@ class SourceFetcherForSubversion(object):
 		if self.rev:
 			command += ' -r ' + self.rev
 		command += ' ' + self.uri + ' ' + self.fetchTarget
-		output = check_output(command, shell=True, stderr=STDOUT)
+		output = check_output(command, shell=True, stderr=STDOUT).decode('utf-8')
 		info(output)
 
 	def updateToRev(self, rev):

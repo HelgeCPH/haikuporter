@@ -132,9 +132,9 @@ class PackageInfo(object):
 		args = [Configuration.getPackageCommand(), 'list', '-i', self.path]
 		if silent:
 			with open(os.devnull, "w") as devnull:
-				output = check_output(args, stderr=devnull)
+				output = check_output(args, stderr=devnull).decode('utf-8')
 		else:
-			output = check_output(args)
+			output = check_output(args).decode('utf-8')
 
 		# get various single-occurrence fields
 		self.name = self._extractField(output, 'name')

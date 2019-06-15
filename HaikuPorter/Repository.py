@@ -594,7 +594,7 @@ class Repository(object):
 				relativeBasePath + '/patches',
 			]
 			entries = check_output([Configuration.getPackageCommand(), 'list',
-				'-p', sourcePackagePath]).splitlines()
+				'-p', sourcePackagePath]).decode('utf-8').splitlines()
 			entries = [
 				entry for entry in entries if entry in allowedEntries
 			]

@@ -184,7 +184,7 @@ class Policy(object):
 		try:
 			with open(os.devnull, "w") as devnull:
 				output = check_output(['readelf', '--dynamic', path],
-					stderr=devnull)
+					stderr=devnull).decode('utf-8')
 		except:
 			return
 
@@ -311,7 +311,7 @@ class Policy(object):
 		try:
 			with open(os.devnull, "w") as devnull:
 				output = check_output(
-					['catattr', '-d', 'SYS:PACKAGE_FILE', path], stderr=devnull)
+					['catattr', '-d', 'SYS:PACKAGE_FILE', path], stderr=devnull).decode('utf-8')
 				if output.endswith('\n'):
 					output = output[:-1]
 				return output
@@ -324,7 +324,7 @@ class Policy(object):
 			with open(os.devnull, "w") as devnull:
 				output = check_output(
 					[Configuration.getPackageCommand(), 'list', package],
-					stderr=devnull)
+					stderr=devnull).decode('utf-8')
 		except:
 			return None
 

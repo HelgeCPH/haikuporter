@@ -263,7 +263,7 @@ class Package(object):
 		# Create the package
 		info('creating package ' + self.hpkgName + ' ...')
 		output = check_output([Configuration.getPackageCommand(), 'create', packageFile],
-			cwd=self.packagingDir)
+			cwd=self.packagingDir).decode('utf-8')
 		info(output)
 		# policy check
 		self.policy.checkPackage(self, packageFile)
@@ -289,7 +289,7 @@ class Package(object):
 		if getOption('quiet'):
 			cmdlineArgs.insert(2, '-q')
 		try:
-			output = check_output(cmdlineArgs, stderr=STDOUT)
+			output = check_output(cmdlineArgs, stderr=STDOUT).decode('utf-8')
 		except CalledProcessError as exception:
 			raise Exception('failure creating the build package: '
 				+ exception.output[:-1])
@@ -589,7 +589,7 @@ class SourcePackage(Package):
 				ensureCommandIsAvailable('git')
 				haikuportsRev \
 					= check_output(['git', 'rev-parse', '--short', 'HEAD'],
-						cwd=Configuration.getTreePath(), stderr=STDOUT)
+						cwd=Configuration.getTreePath(), stderr=STDOUT).decode('utf-8')
 			except:
 				warn('unable to determine revision of haikuports tree')
 		with open(targetBaseDir + '/ReadMe', 'w') as readmeFile:
