@@ -12,6 +12,7 @@ from .Port import Port
 from .Utils import prefixLines, sysExit, touchFile, versionCompare, warn
 
 import codecs
+import functools
 import glob
 import json
 import os
@@ -313,7 +314,10 @@ class Repository(object):
 
 		# Sort version list of each port
 		for portName in list(self._portVersionsByName.keys()):
-			self._portVersionsByName[portName].sort(cmp=versionCompare)
+			# TODO: 2to3 conversion, the following follows the recipe at
+			# https://docs.python.org/3.6/library/functools.html#functools.cmp_to_key
+			# It should likely be replaced by a proper manual refactoring of versionCompare
+			self._portVersionsByName[portName].sort(key=functools.cmp_to_key(versionCompare))
 
 	def _initPortForPackageMaps(self):
 		"""Initialize dictionaries that map package names/IDs to port
