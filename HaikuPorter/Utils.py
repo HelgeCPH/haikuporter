@@ -229,15 +229,26 @@ def ensureCommandIsAvailable(command):
 	if not isCommandAvailable(command):
 		sysExit("'" + command + "' is not available, please install it")
 
+
 def naturalCompare(left, right):
 	"""performs a natural compare between the two given strings - returns:
 		-1 if left is lower than right
 		 1 if left is higher than right
 		 0 if both are equal"""
-
 	convert = lambda text: int(text) if text.isdigit() else text.lower()
 	alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-	return cmp(alphanum_key(left), alphanum_key(right))
+	# TODO: 2to3 conversion, the `cmp` function does not exist in Python 3 anymore
+	# so remove the following:
+	# return cmp(alphanum_key(left), alphanum_key(right))
+	left_alphanum = alphanum_key(left)
+	right_alphanum = alphanum_key(right)
+	if left_alphanum == right_alphanum:
+		return 0
+	elif left_alphanum > right_alphanum:
+		return 1
+	else:
+		return -1
+
 
 def bareVersionCompare(left, right):
 	"""Compares two given bare versions - returns:
