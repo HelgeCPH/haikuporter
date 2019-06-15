@@ -64,7 +64,8 @@ class ConfigParser(object):
 		self.definedPhases = []
 		
 		# TODO: 2to3 conversion, check if ascii is the right encoding or if Haiku uses utf-8
-		output_str = output.decode('ascii')
+		# line 126 suggests that it is utf-8
+		output_str = output.decode('utf-8')
 		lines = output_str.splitlines()
 		for line in lines:
 			## REFACTOR into a testable method that can parse a single line
@@ -121,8 +122,9 @@ class ConfigParser(object):
 				self.entriesByExtension[extension] = {}
 
 			entries = self.entriesByExtension[extension]
-
-			valueString = valueString.replace(r'\n', '\n').decode('utf-8')
+			
+			# TODO: 2to3 conversion, remove the following as it is not needed anymore
+			# valueString = valueString.replace(r'\n', '\n').decode('utf-8')
 			# replace quoted newlines by real newlines
 
 			if attributes[baseKey]['indexable']:
