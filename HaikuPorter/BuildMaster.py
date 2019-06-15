@@ -815,11 +815,11 @@ class BuildMaster(object):
 		if paramiko:
 			self.remoteAvailable = True
 		else:
-			print 'Remote mode unavailable'
+			print('Remote mode unavailable')
 			if self.localBuilders == 0:
 				self.localBuilders = 1
 
-		print 'Local builders count: ' + str(self.localBuilders)
+		print('Local builders count: ' + str(self.localBuilders))
 
 		logHandler = logging.FileHandler(
 			os.path.join(self.buildOutputBaseDir, 'master.log'))
@@ -868,7 +868,7 @@ class BuildMaster(object):
 				self.activeBuilders.append(builder)
 
 		if len(self.activeBuilders) == 0:
-			sysExit(u'no builders available')
+			sysExit('no builders available')
 
 		self.availableBuilders += self.activeBuilders
 
@@ -967,7 +967,7 @@ class BuildMaster(object):
 			head = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
 				cwd=self.portsTreePath, stderr=subprocess.STDOUT)
 		except:
-			warn(u'unable to determine origin and revision of haikuports tree')
+			warn('unable to determine origin and revision of haikuports tree')
 			origin = '<unknown> '
 			head = '<unknown> '
 
@@ -1021,7 +1021,7 @@ class BuildMaster(object):
 			with self.builderCondition:
 				if len(self.activeBuilders) == 0:
 					self._setBuildStatus('all builders lost')
-					sysExit(u'all builders lost')
+					sysExit('all builders lost')
 
 				if len(self.availableBuilders) == 0:
 					self._setBuildStatus('waiting for available builders')

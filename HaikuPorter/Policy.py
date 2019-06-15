@@ -84,7 +84,7 @@ class Policy(object):
 		self._checkPostInstallScripts()
 
 		if self.strict and self.violationEncountered:
-			sysExit(u"packaging policy violation(s) in strict mode")
+			sysExit("packaging policy violation(s) in strict mode")
 
 	def _checkTopLevelEntries(self):
 		for entry in os.listdir(self.package.packagingDir):
@@ -256,7 +256,7 @@ class Policy(object):
 
 		# The library might be provided by a sibling package.
 		providingPackage = None
-		for packageName in self.portPackagesProvides.iterkeys():
+		for packageName in self.portPackagesProvides.keys():
 			packageProvides = self.portPackagesProvides[packageName]
 			if resolvableName in packageProvides:
 				providingPackage = packageName
@@ -282,8 +282,8 @@ class Policy(object):
 			# Find out which package the library belongs to.
 			providingPackage = self._getPackageProvidingPath(libraryPath)
 			if not providingPackage:
-				print('Warning: failed to determine the package providing "%s"'
-					% libraryPath)
+				print(('Warning: failed to determine the package providing "%s"'
+					% libraryPath))
 				return False
 
 			# Chop off ".hpkg" and the version part from the file name to get

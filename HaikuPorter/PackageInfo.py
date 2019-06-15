@@ -76,7 +76,7 @@ class PackageInfo(object):
 		elif path.endswith('.DependencyInfo'):
 			self._parseFromDependencyInfoFile()
 		else:
-			sysExit(u"don't know how to extract package-info from " + path)
+			sysExit("don't know how to extract package-info from " + path)
 
 	@property
 	def versionedName(self):
@@ -107,7 +107,7 @@ class PackageInfo(object):
 
 		if prune:
 			with open(cls.hpkgCachePath, 'wb') as cacheFile:
-				for entry in cls.hpkgCache.itervalues():
+				for entry in cls.hpkgCache.values():
 					pickle.dump(entry, cacheFile, pickle.HIGHEST_PROTOCOL)
 
 	@classmethod
@@ -189,7 +189,7 @@ class PackageInfo(object):
 	def _extractField(self, output, fieldName):
 		result = self._extractOptionalField(output, fieldName)
 		if not result:
-			sysExit(u'Failed to get %s of package "%s"' % (fieldName, self.path))
+			sysExit('Failed to get %s of package "%s"' % (fieldName, self.path))
 		return result
 
 	def _extractOptionalField(self, output, fieldName):

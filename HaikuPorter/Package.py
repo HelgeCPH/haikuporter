@@ -107,7 +107,7 @@ class Package(object):
 		elif Architectures.ANY in self.recipeKeys['ARCHITECTURES']:
 			self.architecture = Architectures.ANY
 		else:
-			sysExit(u'package %s cannot be built for architecture %s'
+			sysExit('package %s cannot be built for architecture %s'
 					% (self.versionedName, port.targetArchitecture))
 
 		self.fullVersionedName = self.versionedName + '-' + self.architecture
@@ -186,7 +186,7 @@ class Package(object):
 		obsoleteDir = packagesPath + '/.obsolete'
 		packageFile = packagesPath + '/' + self.hpkgName
 		if os.path.exists(packageFile):
-			print '\tobsoleting package ' + self.hpkgName
+			print('\tobsoleting package ' + self.hpkgName)
 			obsoletePackage = obsoleteDir + '/' + self.hpkgName
 			if not os.path.exists(obsoleteDir):
 				os.mkdir(obsoleteDir)
@@ -340,11 +340,11 @@ class Package(object):
 
 			infoFile.write('description\t\t"')
 			infoFile.write(
-				escapeForPackageInfo(u'\n'.join(self.recipeKeys['DESCRIPTION'])))
+				escapeForPackageInfo('\n'.join(self.recipeKeys['DESCRIPTION'])))
 			infoFile.write('"\n')
 
-			infoFile.write(u'packager\t\t"' + Configuration.getPackager() + u'"\n')
-			infoFile.write(u'vendor\t\t\t"' + Configuration.getVendor() + u'"\n')
+			infoFile.write('packager\t\t"' + Configuration.getPackager() + '"\n')
+			infoFile.write('vendor\t\t\t"' + Configuration.getVendor() + '"\n')
 
 			# These keys aren't mandatory so we need to check if they exist
 			if self.recipeKeys['LICENSE']:
@@ -356,7 +356,7 @@ class Package(object):
 			if self.recipeKeys['COPYRIGHT']:
 				infoFile.write('copyrights {\n')
 				for aCopyright in self.recipeKeys['COPYRIGHT']:
-					infoFile.write(u'\t"' + aCopyright + u'"\n')
+					infoFile.write('\t"' + aCopyright + '"\n')
 				infoFile.write('}\n')
 
 			requires = []
@@ -413,7 +413,7 @@ class Package(object):
 			# Generate SourceURL lines for all ports, regardless of license.
 			# Re-use the download URLs, as specified in the recipe.
 			infoFile.write('source-urls {\n')
-			for index in sorted(self.recipeKeys['SOURCE_URI'].keys(),
+			for index in sorted(list(self.recipeKeys['SOURCE_URI'].keys()),
 								cmp=naturalCompare):
 				uricount = 1
 				for uri in self.recipeKeys['SOURCE_URI'][index]:
@@ -590,7 +590,7 @@ class SourcePackage(Package):
 					= check_output(['git', 'rev-parse', '--short', 'HEAD'],
 						cwd=Configuration.getTreePath(), stderr=STDOUT)
 			except:
-				warn(u'unable to determine revision of haikuports tree')
+				warn('unable to determine revision of haikuports tree')
 		with open(targetBaseDir + '/ReadMe', 'w') as readmeFile:
 			readmeFile.write((
 				'These are the sources (and optionally patches) that were\n'

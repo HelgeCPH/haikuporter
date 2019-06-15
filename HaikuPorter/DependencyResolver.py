@@ -236,7 +236,7 @@ class DependencyResolver(object):
 				return
 			if getOption('getDependencies'):
 				try:
-					print('Fetching package for ' + str(requires) + ' ...')
+					print(('Fetching package for ' + str(requires) + ' ...'))
 					output = check_output(['pkgman', 'install', '-y', str(requires)])
 					for pkg in re.findall(r'://.*/([^/\n]+\.hpkg)', output):
 						pkginfo = PackageInfo('/boot/system/packages/' + pkg)
@@ -283,7 +283,7 @@ class DependencyResolver(object):
 			packageInfo = PackageInfo(packageInfoFile)
 			DependencyResolver.packageInfoCache[packageInfoFile] = packageInfo
 		except CalledProcessError:
-			message = u'failed to parse "%s"' % packageInfoFile
+			message = 'failed to parse "%s"' % packageInfoFile
 			sysExit(message) if fatal else warn(message)
 			return None
 

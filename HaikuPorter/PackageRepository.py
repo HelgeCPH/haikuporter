@@ -70,7 +70,7 @@ class PackageRepository(object):
 	def obsoletePackage(self, path, reason=None):
 		packageFileName = os.path.basename(path)
 		if not self.quiet:
-			print('\tobsoleting package {}: {}'.format(packageFileName, reason))
+			print(('\tobsoleting package {}: {}'.format(packageFileName, reason)))
 
 		os.rename(path, os.path.join(self.obsoleteDir, packageFileName))
 
@@ -188,10 +188,10 @@ class PackageRepository(object):
 
 		for package in self.packageInfoList():
 			if self.verbose:
-				print('checking package {}'.format(package.path))
+				print(('checking package {}'.format(package.path)))
 
 			try:
 				resolver.determineRequiredPackagesFor([package.path])
 			except LookupError as error:
-				print('{}:\n{}\n'.format(os.path.relpath(package.path,
-						self.packagesPath), prefixLines('\t', str(error))))
+				print(('{}:\n{}\n'.format(os.path.relpath(package.path,
+						self.packagesPath), prefixLines('\t', str(error)))))

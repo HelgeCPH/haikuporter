@@ -32,7 +32,7 @@ def parseCheckoutUri(uri):
 	# If it doesn't find the 'type' it should extract 'real_uri' and 'rev'
 	m = re.match(r'^((?P<type>\w*)\+)?(?P<realUri>.+?)(#(?P<rev>.+))?$', uri)
 	if not m or not m.group('realUri'):
-		sysExit(u"Couldn't parse repository URI " + uri)
+		sysExit("Couldn't parse repository URI " + uri)
 
 	uriType = m.group('type')
 	realUri = m.group('realUri')
@@ -45,7 +45,7 @@ def parseCheckoutUri(uri):
 			uriType = m.group(1)
 
 	if not uriType:
-		sysExit(u"Couldn't parse repository type from URI " + realUri)
+		sysExit("Couldn't parse repository type from URI " + realUri)
 
 	return (uriType, realUri, rev)
 
@@ -117,8 +117,8 @@ class SourceFetcherForBazaar(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
@@ -132,8 +132,8 @@ class SourceFetcherForBazaar(object):
 		info(output)
 
 	def updateToRev(self, rev):
-		warn(u"Updating of a Bazaar repository to a specific revision has "
-			 u"not been implemented yet, sorry")
+		warn("Updating of a Bazaar repository to a specific revision has "
+			 "not been implemented yet, sorry")
 
 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
@@ -153,8 +153,8 @@ class SourceFetcherForCvs(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
@@ -176,8 +176,8 @@ class SourceFetcherForCvs(object):
 		info(output)
 
 	def updateToRev(self, rev):
-		warn(u"Updating of a CVS repository to a specific revision has "
-			 u"not been implemented yet, sorry")
+		warn("Updating of a CVS repository to a specific revision has "
+			 "not been implemented yet, sorry")
 
 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
@@ -239,8 +239,8 @@ class SourceFetcherForFossil(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
@@ -257,8 +257,8 @@ class SourceFetcherForFossil(object):
 		info(output)
 
 	def updateToRev(self, rev):
-		warn(u"Updating of a Fossil repository to a specific revision has "
-			 u"not been implemented yet, sorry")
+		warn("Updating of a Fossil repository to a specific revision has "
+			 "not been implemented yet, sorry")
 
 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
@@ -277,8 +277,8 @@ class SourceFetcherForGit(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
@@ -297,13 +297,13 @@ class SourceFetcherForGit(object):
 			output = check_output(command, shell=True, cwd=self.fetchTarget)
 			info(output)
 		except:
-			print 'trying to fetch revision %s from upstream' % self.rev
+			print('trying to fetch revision %s from upstream' % self.rev)
 			command = "git branch | cut -c3-"
 			branches = check_output(command, shell=True,
 									cwd=self.fetchTarget, stderr=STDOUT).splitlines()
 			for branch in branches:
 				command = 'git fetch origin %s:%s' % (branch, branch)
-				print command
+				print(command)
 				output = check_output(command, shell=True, cwd=self.fetchTarget)
 				info(output)
 			# ensure that the revision really is available now
@@ -359,8 +359,8 @@ class SourceFetcherForMercurial(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
@@ -440,8 +440,8 @@ class SourceFetcherForSubversion(object):
 
 	def fetch(self):
 		if not Configuration.shallAllowUnsafeSources():
-			sysExit(u'Downloading from unsafe sources is disabled in ' +
-					u'haikuports.conf!')
+			sysExit('Downloading from unsafe sources is disabled in ' +
+					'haikuports.conf!')
 
 		ensureCommandIsAvailable('svn')
 		command = 'svn co --non-interactive --trust-server-cert'
@@ -452,8 +452,8 @@ class SourceFetcherForSubversion(object):
 		info(output)
 
 	def updateToRev(self, rev):
-		warn(u"Updating of a Subversion repository to a specific revision has "
-			 u"not been implemented yet, sorry")
+		warn("Updating of a Subversion repository to a specific revision has "
+			 "not been implemented yet, sorry")
 
 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
@@ -486,4 +486,4 @@ def createSourceFetcher(uri, fetchTarget):
 	elif ':' not in lowerUri:
 		return SourceFetcherForLocalFile(uri, fetchTarget)
 	else:
-		sysExit(u'The protocol of SOURCE_URI %s is unsupported, sorry.' % uri)
+		sysExit('The protocol of SOURCE_URI %s is unsupported, sorry.' % uri)
