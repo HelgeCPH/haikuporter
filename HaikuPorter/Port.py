@@ -61,7 +61,8 @@ from .Utils import (
 # -- Modules preloaded for chroot ---------------------------------------------
 # These modules need to be preloaded in order to avoid problems with python
 # trying to dynamically load them inside a chroot environment
-from encodings import string_escape
+# TODO: 2to3 remove, seems to be never used in any of the other Python modules
+# from encodings import string_escape
 
 
 # -- Scoped resource for chroot environments ----------------------------------
