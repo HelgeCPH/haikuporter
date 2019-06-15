@@ -14,6 +14,7 @@
 # -- Modules ------------------------------------------------------------------
 
 import codecs
+import functools
 import json
 import os
 import re
@@ -999,7 +1000,7 @@ class Port(object):
 		basedOnSourcePackage = False
 		## REFACTOR it looks like this method should be setup and dispatch
 
-		for index in sorted(list(keys['SOURCE_URI'].keys()), cmp=naturalCompare):
+		for index in sorted(list(keys['SOURCE_URI'].keys()), key=functools.cmp_to_key(naturalCompare)):
 			source = Source(self, index, keys['SOURCE_URI'][index],
 							keys['SOURCE_FILENAME'].get(index, None),
 							keys['CHECKSUM_SHA256'].get(index, None),

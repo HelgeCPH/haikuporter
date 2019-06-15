@@ -24,6 +24,7 @@ from .Utils import (ensureCommandIsAvailable, escapeForPackageInfo,
 
 import codecs
 import datetime
+import functools
 import json
 import os
 import shutil
@@ -414,7 +415,7 @@ class Package(object):
 			# Re-use the download URLs, as specified in the recipe.
 			infoFile.write('source-urls {\n')
 			for index in sorted(list(self.recipeKeys['SOURCE_URI'].keys()),
-								cmp=naturalCompare):
+								key=functools.cmp_to_key(naturalCompare)):
 				uricount = 1
 				for uri in self.recipeKeys['SOURCE_URI'][index]:
 					if 'file://' in uri:
