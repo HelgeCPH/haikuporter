@@ -62,8 +62,10 @@ class ConfigParser(object):
 
 		self.entriesByExtension = {}
 		self.definedPhases = []
-
-		lines = output.splitlines()
+		
+		# TODO: 2to3 conversion, check if ascii is the right encoding or if Haiku uses utf-8
+		output_str = output.decode('ascii')
+		lines = output_str.splitlines()
 		for line in lines:
 			## REFACTOR into a testable method that can parse a single line
 			key, separator, valueString = line.partition('=')
@@ -71,7 +73,7 @@ class ConfigParser(object):
 				sysExit('evaluating file %s produced illegal '
 						'key-values line:\n	 %s\nexpected "<key>=<value>"\n'
 						'output of configuration script was: %s\n'
-						% (filename, line, output))
+						% (filename, line, output_str))
 
 			# some keys may have a package-specific extension, check:
 			if key in attributes:
