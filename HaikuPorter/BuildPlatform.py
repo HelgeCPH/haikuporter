@@ -127,7 +127,7 @@ class BuildPlatformHaiku(BuildPlatform):
 		"""wraps invocation of 'finddir', uses caching"""
 		if which not in self.findDirectoryCache:
 			self.findDirectoryCache[which] \
-				= check_output(['/bin/finddir', which]).rstrip()  # drop newline
+				= check_output(['/bin/finddir', which]).rstrip().decode('utf-8')  # drop newline
 		return self.findDirectoryCache[which]
 
 	def resolveDependencies(self, dependencyInfoFiles, requiresTypes,
