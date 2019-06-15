@@ -1,0 +1,2936 @@
+RefactoringTool: Adding transformation: apply
+RefactoringTool: Adding transformation: asserts
+RefactoringTool: Adding transformation: basestring
+RefactoringTool: Skipping optional fixer: buffer
+RefactoringTool: Adding transformation: dict
+RefactoringTool: Adding transformation: except
+RefactoringTool: Adding transformation: exec
+RefactoringTool: Adding transformation: execfile
+RefactoringTool: Adding transformation: exitfunc
+RefactoringTool: Adding transformation: filter
+RefactoringTool: Adding transformation: funcattrs
+RefactoringTool: Adding transformation: future
+RefactoringTool: Adding transformation: getcwdu
+RefactoringTool: Adding transformation: has_key
+RefactoringTool: Adding transformation: idioms
+RefactoringTool: Adding transformation: import
+RefactoringTool: Adding transformation: imports
+RefactoringTool: Adding transformation: imports2
+RefactoringTool: Adding transformation: input
+RefactoringTool: Adding transformation: intern
+RefactoringTool: Adding transformation: isinstance
+RefactoringTool: Adding transformation: itertools
+RefactoringTool: Adding transformation: itertools_imports
+RefactoringTool: Adding transformation: long
+RefactoringTool: Adding transformation: map
+RefactoringTool: Adding transformation: metaclass
+RefactoringTool: Adding transformation: methodattrs
+RefactoringTool: Adding transformation: ne
+RefactoringTool: Adding transformation: next
+RefactoringTool: Adding transformation: nonzero
+RefactoringTool: Adding transformation: numliterals
+RefactoringTool: Adding transformation: operator
+RefactoringTool: Adding transformation: paren
+RefactoringTool: Adding transformation: print
+RefactoringTool: Adding transformation: raise
+RefactoringTool: Adding transformation: raw_input
+RefactoringTool: Adding transformation: reduce
+RefactoringTool: Adding transformation: reload
+RefactoringTool: Adding transformation: renames
+RefactoringTool: Adding transformation: repr
+RefactoringTool: Skipping optional fixer: set_literal
+RefactoringTool: Adding transformation: standarderror
+RefactoringTool: Adding transformation: sys_exc
+RefactoringTool: Adding transformation: throw
+RefactoringTool: Adding transformation: tuple_params
+RefactoringTool: Adding transformation: types
+RefactoringTool: Adding transformation: unicode
+RefactoringTool: Adding transformation: urllib
+RefactoringTool: Skipping optional fixer: ws_comma
+RefactoringTool: Adding transformation: xrange
+RefactoringTool: Adding transformation: xreadlines
+RefactoringTool: Adding transformation: zip
+RefactoringTool: Descending into .
+RefactoringTool: Descending into ./HaikuPorter
+RefactoringTool: Descending into ./buildmaster
+RefactoringTool: Descending into ./buildmaster/bin
+RefactoringTool: Descending into ./buildmaster/docker
+RefactoringTool: Descending into ./buildmaster/docker-frontend
+RefactoringTool: Descending into ./buildmaster/frontend
+RefactoringTool: Descending into ./buildmaster/frontend/assets
+RefactoringTool: Descending into ./buildmaster/frontend/assets/css
+RefactoringTool: Descending into ./buildmaster/frontend/assets/img
+RefactoringTool: Descending into ./buildmaster/frontend/assets/js
+RefactoringTool: Descending into ./doc
+RefactoringTool: Descending into ./doc/api
+RefactoringTool: Descending into ./generic
+RefactoringTool: Descending into ./tools
+RefactoringTool: Refactoring ./setup.py
+RefactoringTool: No changes to ./setup.py
+RefactoringTool: No changes to ./setup.py
+RefactoringTool: Wrote changes to ./setup.py
+RefactoringTool: Refactoring ./HaikuPorter/ConfigParser.py
+RefactoringTool: Refactoring ./HaikuPorter/Configuration.py
+RefactoringTool: Refactoring ./HaikuPorter/BuildPlatform.py
+RefactoringTool: Refactored ./HaikuPorter/ConfigParser.py
+--- ./HaikuPorter/ConfigParser.py	(original)
++++ ./HaikuPorter/ConfigParser.py	(refactored)
+@@ -1,4 +1,4 @@
+-from __future__ import absolute_import
++
+ # -*- coding: utf-8 -*-
+ #
+ # Copyright 2013 Oliver Tappe
+@@ -46,7 +46,7 @@
+ 		shellEnv['recipePhases'] = ' '.join(Phase.getAllowedValues())
+ 
+ 		# execute the config file via the shell ....
+-		supportedKeysString = '|'.join(attributes.keys())
++		supportedKeysString = '|'.join(list(attributes.keys()))
+ 		shellVariables = shellVariables.copy()
+ 		shellVariables['supportedKeysPattern'] = supportedKeysString
+ 		shellVariables['fileToParse'] = filename
+@@ -56,7 +56,7 @@
+ 		try:
+ 			output = check_output(['bash', '-c', wrapperScript], env=shellEnv)
+ 		except (OSError, CalledProcessError):
+-			sysExit(u"Can't evaluate config file: " + filename)
++			sysExit("Can't evaluate config file: " + filename)
+ 
+ 		# ... and collect the resulting configurations (one per line)
+ 
+@@ -68,9 +68,9 @@
+ 			## REFACTOR into a testable method that can parse a single line
+ 			key, separator, valueString = line.partition('=')
+ 			if not separator:
+-				sysExit(u'evaluating file %s produced illegal '
+-						u'key-values line:\n	 %s\nexpected "<key>=<value>"\n'
+-						u'output of configuration script was: %s\n'
++				sysExit('evaluating file %s produced illegal '
++						'key-values line:\n	 %s\nexpected "<key>=<value>"\n'
++						'output of configuration script was: %s\n'
+ 						% (filename, line, output))
+ 
+ 			# some keys may have a package-specific extension, check:
+@@ -97,7 +97,7 @@
+ 							if len(subKeys) == 1 and subKeys[0].isdigit():
+ 								index = subKeys[0]
+ 								break
+-						warn(u'Ignoring key %s in file %s' % (key, filename))
++						warn('Ignoring key %s in file %s' % (key, filename))
+ 						continue
+ 				else:
+ 					# might be a <PHASE>_DEFINED
+@@ -110,7 +110,7 @@
+ 
+ 					if not isPhaseKey:
+ 						# skip unsupported key, just in case
+-						warn(u'Key %s in file %s is unsupported, ignoring it'
++						warn('Key %s in file %s is unsupported, ignoring it'
+ 							 % (key, filename))
+ 					continue
+ 
+@@ -129,22 +129,22 @@
+ 
+ 			## REFACTOR into one method per if/elif branch
+ 			attrType = attributes[baseKey]['type']
+-			if attrType == types.StringType:
++			if attrType == bytes:
+ 				if attributes[baseKey]['indexable']:
+ 					entries[baseKey][index] = valueString
+ 				else:
+ 					entries[key] = valueString
+-			elif attrType == types.IntType:
++			elif attrType == int:
+ 				try:
+ 					if attributes[baseKey]['indexable']:
+ 						entries[baseKey][index] = int(valueString)
+ 					else:
+ 						entries[key] = int(valueString)
+ 				except ValueError:
+-					sysExit(u'evaluating file %s produced illegal value '
+-							u'"%s" for key %s, expected an <integer> value'
++					sysExit('evaluating file %s produced illegal value '
++							'"%s" for key %s, expected an <integer> value'
+ 							% (filename, valueString, key))
+-			elif attrType in [types.ListType, ProvidesList, RequiresList]:
++			elif attrType in [list, ProvidesList, RequiresList]:
+ 				values = [v.strip() for v in valueString.splitlines()]
+ 				values = [v for v in values if len(v) > 0]
+ 				# explicitly protect against '-' in names of provides or
+@@ -153,10 +153,10 @@
+ 					values = [v.lower() for v in values]
+ 					for value in values:
+ 						if '-' in value.split()[0]:
+-							sysExit(u'evaluating file %s produced illegal value '
+-									u'"%s" for key %s\n'
+-									u'dashes are not allowed in provides- or '
+-									u'requires declarations'
++							sysExit('evaluating file %s produced illegal value '
++									'"%s" for key %s\n'
++									'dashes are not allowed in provides- or '
++									'requires declarations'
+ 									% (filename, value, key))
+ 				if attributes[baseKey]['indexable']:
+ 					entries[baseKey][index] = values
+@@ -173,8 +173,8 @@
+ 				entries[key] = values
+ 			elif attrType == Phase:
+ 				if valueString.upper() not in Phase.getAllowedValues():
+-					sysExit(u'evaluating file %s\nproduced illegal value "%s" '
+-							u'for key %s\nexpected one of: %s'
++					sysExit('evaluating file %s\nproduced illegal value "%s" '
++							'for key %s\nexpected one of: %s'
+ 							% (filename, valueString, key,
+ 							   ','.join(Phase.getAllowedValues())))
+ 				entries[key] = valueString.upper()
+@@ -184,8 +184,8 @@
+ 				valueString = valueString.lower()
+ 				if valueString not in knownArchitectures:
+ 					architectures = ','.join(knownArchitectures)
+-					sysExit(u'%s refers to unknown machine-architecture %s\n'
+-							u'known machine-architectures: %s'
++					sysExit('%s refers to unknown machine-architecture %s\n'
++							'known machine-architectures: %s'
+ 							% (filename, valueString, architectures))
+ 				entries[key] = valueString
+ 			elif attrType == Architectures:
+@@ -204,24 +204,24 @@
+ 					knownArchitectures = Architectures.getAll()
+ 					if architecture not in knownArchitectures:
+ 						architectures = ','.join(knownArchitectures)
+-						sysExit(u'%s refers to unknown architecture %s\n'
+-								u'known architectures: %s'
++						sysExit('%s refers to unknown architecture %s\n'
++								'known architectures: %s'
+ 								% (filename, architecture, architectures))
+ 					entries[key][architecture] = status
+ 				if 'any' in entries[key] and len(entries[key]) > 1:
+-					sysExit(u"%s specifies both 'any' and other architectures"
++					sysExit("%s specifies both 'any' and other architectures"
+ 							% (filename))
+ 				if 'source' in entries[key] and len(entries[key]) > 1:
+-					sysExit(u"%s specifies both 'source' and other architectures"
++					sysExit("%s specifies both 'source' and other architectures"
+ 							% (filename))
+ 			elif attrType == YesNo:
+ 				valueString = valueString.lower()
+ 				if valueString not in YesNo.getAllowedValues():
+-					sysExit(u"Value for %s should be 'yes' or 'no' in %s"
++					sysExit("Value for %s should be 'yes' or 'no' in %s"
+ 							% (key, filename))
+ 				entries[key] = YesNo.toBool(valueString)
+ 			else:
+-				sysExit(u'type of key %s in file %s is unsupported'
++				sysExit('type of key %s in file %s is unsupported'
+ 						% (key, filename))
+ 				# for entries in self.entriesByExtension.values():
+ 				# for key in entries:
+@@ -235,7 +235,7 @@
+ 
+ 	@property
+ 	def extensions(self):
+-		return self.entriesByExtension.keys()
++		return list(self.entriesByExtension.keys())
+ 
+ 
+ 	## REFACTOR - consider using simple functions for this
+@@ -284,14 +284,14 @@
+ 	@staticmethod
+ 	def configurationStringFromDict(config):
+ 		configurationString = ''
+-		for key in config.keys():
++		for key in list(config.keys()):
+ 			configurationString += key + '="'
+ 
+-			if isinstance(config[key], types.ListType):
++			if isinstance(config[key], list):
+ 				configurationString += reduce(
+ 					lambda result, item: result + ' ' + item, config[key],
+ 					'').strip()
+-			elif isinstance(config[key], types.BooleanType):
++			elif isinstance(config[key], bool):
+ 				configurationString += 'yes' if config[key] else 'no'
+ 			else:
+ 				configurationString += str(config[key])
+RefactoringTool: Wrote changes to ./HaikuPorter/ConfigParser.py
+RefactoringTool: Refactoring ./HaikuPorter/BuildMaster.py
+RefactoringTool: Refactoring ./HaikuPorter/DependencyAnalyzer.py
+RefactoringTool: Refactored ./HaikuPorter/Configuration.py
+--- ./HaikuPorter/Configuration.py	(original)
++++ ./HaikuPorter/Configuration.py	(refactored)
+@@ -53,7 +53,7 @@
+ 		'setAttribute': 'allowUnsafeSources'
+ 	},
+ 	'CROSS_DEVEL_PACKAGE': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -62,7 +62,7 @@
+ 		'setAttribute': 'crossDevelPackage',
+ 	},
+ 	'CROSS_TOOLS': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -79,7 +79,7 @@
+ 		'setAttribute': 'downloadInPortDirectory',
+ 	},
+ 	'DOWNLOAD_MIRROR': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': 'https://ports-mirror.haiku-os.org',
+ 		'extendable': Extendable.NO,
+@@ -87,7 +87,7 @@
+ 		'setAttribute': 'downloadMirror',
+ 	},
+ 	'LICENSES_DIRECTORY': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -96,7 +96,7 @@
+ 		'setAttribute': 'licensesDirectory',
+ 	},
+ 	'MIMESET_COMMAND': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -105,7 +105,7 @@
+ 		'setAttribute': 'mimesetCommand',
+ 	},
+ 	'OUTPUT_DIRECTORY': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -113,7 +113,7 @@
+ 		'setAttribute': 'outputDirectory',
+ 	},
+ 	'PACKAGES_PATH': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -121,7 +121,7 @@
+ 		'setAttribute': 'packagesPath',
+ 	},
+ 	'PACKAGE_COMMAND': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -130,7 +130,7 @@
+ 		'setAttribute': 'packageCommand',
+ 	},
+ 	'PACKAGE_REPO_COMMAND': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -139,7 +139,7 @@
+ 		'setAttribute': 'packageRepoCommand',
+ 	},
+ 	'PACKAGER': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': True,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -147,7 +147,7 @@
+ 		'setAttribute': 'packager',
+ 	},
+ 	'REPOSITORY_PATH': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -155,7 +155,7 @@
+ 		'setAttribute': 'repositoryPath',
+ 	},
+ 	'SECONDARY_CROSS_DEVEL_PACKAGES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.NO,
+@@ -164,14 +164,14 @@
+ 		'setAttribute': 'secondaryCrossDevelPackages',
+ 	},
+ 	'SECONDARY_CROSS_TOOLS': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.NO,
+ 		'indexable': False,
+ 	},
+ 	'SECONDARY_TARGET_ARCHITECTURES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.NO,
+@@ -179,7 +179,7 @@
+ 		'setAttribute': 'secondaryArchitectures',
+ 	},
+ 	'SOURCEFORGE_MIRROR': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -196,7 +196,7 @@
+ 		'setAttribute': 'targetArchitecture',
+ 	},
+ 	'TREE_PATH': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': True,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -204,7 +204,7 @@
+ 		'setAttribute': 'treePath',
+ 	},
+ 	'SYSTEM_MIME_DB': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+@@ -213,7 +213,7 @@
+ 		'setAttribute': 'systemMimeDB',
+ 	},
+ 	'VENDOR': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': 'Haiku Project',
+ 		'extendable': Extendable.NO,
+@@ -390,14 +390,14 @@
+ 					haikuportsConf = '/system/settings/haikuports.conf'
+ 
+ 		if not os.path.exists(haikuportsConf):
+-			sysExit(u"Unable to find haikuports.conf in known search paths.\n"
+-				+ u"See haikuports-sample.conf for more information")
++			sysExit("Unable to find haikuports.conf in known search paths.\n"
++				+ "See haikuports-sample.conf for more information")
+ 
+ 		configParser = ConfigParser(haikuportsConf, haikuportsAttributes, {})
+ 		configurationValue = configParser.getEntriesForExtension('')
+ 
+ 		# check whether all required values are present
+-		for key in haikuportsAttributes.keys():
++		for key in list(haikuportsAttributes.keys()):
+ 			if 'optionAttribute' in haikuportsAttributes[key]:
+ 				optionAttribute = haikuportsAttributes[key]['optionAttribute']
+ 				optionValue = getOption(optionAttribute)
+@@ -406,7 +406,7 @@
+ 
+ 			if key not in configurationValue:
+ 				if haikuportsAttributes[key]['required']:
+-					sysExit(u"Required value '" + key + u"' not present in "
++					sysExit("Required value '" + key + "' not present in "
+ 							+ haikuportsConf)
+ 
+ 				# set default value, as no other value has been provided
+@@ -424,13 +424,13 @@
+ 		# determine if we are using a cross-build repository
+ 		self.isCrossBuildRepository = os.path.exists(self.treePath + '/.cross')
+ 		if self.isCrossBuildRepository and not self.targetArchitecture:
+-			sysExit(u'For a cross-build repository, TARGET_ARCHITECTURE '
+-				u'needs to be set in ' + haikuportsConf)
++			sysExit('For a cross-build repository, TARGET_ARCHITECTURE '
++				'needs to be set in ' + haikuportsConf)
+ 
+ 		# split packager into name and email:
+ 		m = re.match(r'^\s*(?P<name>.+?)\s*<(?P<email>.+?)>$', self.packager)
+ 		if not m:
+-			sysExit(u"Couldn't parse name/email from PACKAGER value "
++			sysExit("Couldn't parse name/email from PACKAGER value "
+ 					+ self.packager)
+ 		self.packagerName = m.group('name')
+ 		self.packagerEmail = m.group('email')
+@@ -440,8 +440,8 @@
+ 			crossTools = configurationValue.get('SECONDARY_CROSS_TOOLS')
+ 			if crossTools:
+ 				if len(crossTools) != len(self.secondaryArchitectures):
+-					sysExit(u'A cross-tools directory must be specified for '
+-						u'each secondary architecture')
++					sysExit('A cross-tools directory must be specified for '
++						'each secondary architecture')
+ 				for architecture, tools \
+ 						in zip(self.secondaryArchitectures, crossTools):
+ 					self.secondaryCrossTools[architecture] = tools
+@@ -450,8 +450,8 @@
+ 				crossDevelPackages = self.secondaryCrossDevelPackages
+ 				self.secondaryCrossDevelPackages = {}
+ 				if len(crossDevelPackages) != len(self.secondaryArchitectures):
+-					sysExit(u'A cross-tools devel pacakge must be specified for '
+-						u'each secondary architecture')
++					sysExit('A cross-tools devel pacakge must be specified for '
++						'each secondary architecture')
+ 				for architecture, package \
+ 						in zip(self.secondaryArchitectures, crossDevelPackages):
+ 					self.secondaryCrossDevelPackages[architecture] = package
+RefactoringTool: Wrote changes to ./HaikuPorter/Configuration.py
+RefactoringTool: Refactoring ./HaikuPorter/DependencyResolver.py
+RefactoringTool: Refactored ./HaikuPorter/BuildPlatform.py
+--- ./HaikuPorter/BuildPlatform.py	(original)
++++ ./HaikuPorter/BuildPlatform.py	(refactored)
+@@ -84,8 +84,8 @@
+ 	def init(self, treePath, outputDirectory, packagesPath,
+ 			shallowInitIsEnough=False):
+ 		if not os.path.exists('/packages'):
+-			sysExit(u'haikuporter needs a version of Haiku with package '
+-					u'management support')
++			sysExit('haikuporter needs a version of Haiku with package '
++					'management support')
+ 
+ 		self.findDirectoryCache = {}
+ 
+@@ -103,14 +103,14 @@
+ 				systemPackageName = entry
+ 				break
+ 		if systemPackageName is None:
+-			sysExit(u'Failed to find Haiku system package')
++			sysExit('Failed to find Haiku system package')
+ 
+ 		haikuPackageInfo = PackageInfo(
+ 			os.path.join(packagesDir, systemPackageName))
+ 		machine = MachineArchitecture.getTripleFor(
+ 			haikuPackageInfo.architecture)
+ 		if not machine:
+-			sysExit(u'Unsupported Haiku build platform architecture %s'
++			sysExit('Unsupported Haiku build platform architecture %s'
+ 					% haikuPackageInfo.architecture)
+ 
+ 		super(BuildPlatformHaiku, self).init(treePath, outputDirectory,
+@@ -183,11 +183,11 @@
+ 
+ 	def setupNonChrootBuildEnvironment(self, workDir, secondaryArchitecture,
+ 			requiredPackages):
+-		sysExit(u'setupNonChrootBuildEnvironment() not supported on Haiku')
++		sysExit('setupNonChrootBuildEnvironment() not supported on Haiku')
+ 
+ 	def cleanNonChrootBuildEnvironment(self, workDir, secondaryArchitecture,
+ 			buildOK):
+-		sysExit(u'cleanNonChrootBuildEnvironment() not supported on Haiku')
++		sysExit('cleanNonChrootBuildEnvironment() not supported on Haiku')
+ 
+ 	def _waitForPackageSelfLink(self, revisionedName, activated):
+ 		while True:
+@@ -236,27 +236,27 @@
+ 
+ 		if not shallowInitIsEnough:
+ 			if Configuration.getPackageCommand() is None:
+-				sysExit(u'--command-package must be specified on this build '
+-					u'platform!')
++				sysExit('--command-package must be specified on this build '
++					'platform!')
+ 			if Configuration.getMimesetCommand() == 'mimeset':
+-				sysExit(u'--command-mimeset must be specified on this build '
+-					u'platform!')
++				sysExit('--command-mimeset must be specified on this build '
++					'platform!')
+ 			if not Configuration.getSystemMimeDbDirectory():
+-				sysExit(u'--system-mimedb must be specified on this build '
+-					u'platform!')
++				sysExit('--system-mimedb must be specified on this build '
++					'platform!')
+ 
+ 			if not Configuration.getCrossToolsDirectory():
+-				sysExit(u'--cross-tools must be specified on this build '
+-					u'platform!')
++				sysExit('--cross-tools must be specified on this build '
++					'platform!')
+ 			self.originalCrossToolsDir = Configuration.getCrossToolsDirectory()
+ 
+ 			self.secondaryTargetMachineTriples = {}
+ 			if self.secondaryTargetArchitectures:
+ 				if not Configuration.getSecondaryCrossToolsDirectory(
+ 						self.secondaryTargetArchitectures[0]):
+-					sysExit(u'The cross-tools directories for all secondary '
+-						u'architectures must be specified on this build '
+-						u'platform!')
++					sysExit('The cross-tools directories for all secondary '
++						'architectures must be specified on this build '
++						'platform!')
+ 
+ 				for secondaryArchitecture in self.secondaryTargetArchitectures:
+ 					self.secondaryTargetMachineTriples[secondaryArchitecture] \
+@@ -265,9 +265,9 @@
+ 
+ 				if not Configuration.getSecondaryCrossDevelPackage(
+ 						self.secondaryTargetArchitectures[0]):
+-					sysExit(u'The Haiku cross devel package for all secondary '
+-						u'architectures must be specified on this build '
+-						u'platform!')
++					sysExit('The Haiku cross devel package for all secondary '
++						'architectures must be specified on this build '
++						'platform!')
+ 
+ 		self.findDirectoryMap = {
+ 			'B_PACKAGE_LINKS_DIRECTORY': '/packages',
+@@ -278,8 +278,8 @@
+ 		self.crossDevelPackage = Configuration.getCrossDevelPackage()
+ 		targetArchitecture = Configuration.getTargetArchitecture()
+ 		if targetArchitecture is None:
+-			sysExit(u'TARGET_ARCHITECTURE must be set in configuration on this '
+-				u'build platform!')
++			sysExit('TARGET_ARCHITECTURE must be set in configuration on this '
++				'build platform!')
+ 		self.targetMachineTriple \
+ 			= MachineArchitecture.getTripleFor(targetArchitecture)
+ 		targetMachineAsName = self.targetMachineTriple.replace('-', '_')
+@@ -375,7 +375,7 @@
+ 				return systemPackagesDirectory
+ 
+ 		if which not in self.findDirectoryMap:
+-			sysExit(u'Unsupported findDirectory() constant "%s"' % which)
++			sysExit('Unsupported findDirectory() constant "%s"' % which)
+ 		return self.findDirectoryMap[which]
+ 
+ 	def isSystemPackage(self, packagePath):
+@@ -422,7 +422,7 @@
+ 			shutil.rmtree(sysrootDir)
+ 		os.makedirs(sysrootDir)
+ 
+-		print 'Setting up sysroot for non-chroot build: ' + sysrootDir
++		print('Setting up sysroot for non-chroot build: ' + sysrootDir)
+ 
+ 		os.mkdir(sysrootDir + '/packages')
+ 		os.mkdir(sysrootDir + '/boot')
+@@ -432,7 +432,7 @@
+ 
+ 		# extract the haiku_cross_devel_sysroot package
+ 		crossDevelPackage = self._getCrossDevelPackage(secondaryArchitecture)
+-		print 'Activating haiku_cross_devel_sysroot package: ' + crossDevelPackage
++		print('Activating haiku_cross_devel_sysroot package: ' + crossDevelPackage)
+ 		self._activatePackage(crossDevelPackage, sysrootDir, '/boot/system')
+ 
+ 		# extract the required packages
+@@ -582,7 +582,7 @@
+ 		else:
+ 			installPath = packageInfo.installPath
+ 			if not installPath:
+-				sysExit(u'Build package "%s" doesn\'t have an install path'
++				sysExit('Build package "%s" doesn\'t have an install path'
+ 					% package)
+ 
+ 		# create the package links directory for the package and the .self
+@@ -607,11 +607,11 @@
+ 			shallowInitIsEnough=False):
+ 
+ 		if Configuration.getTargetArchitecture() is None:
+-			sysExit(u'TARGET_ARCHITECTURE must be set in configuration for '
+-				+ u'build master mode!')
++			sysExit('TARGET_ARCHITECTURE must be set in configuration for '
++				+ 'build master mode!')
+ 		if Configuration.getPackageCommand() is None:
+-			sysExit(u'--command-package must be specified for build master '
+-				+ u'mode!')
++			sysExit('--command-package must be specified for build master '
++				+ 'mode!')
+ 
+ 		super(BuildPlatformBuildMaster, self).init(treePath, outputDirectory,
+ 			packagesPath, Architectures.ANY, 'BuildMaster')
+@@ -635,31 +635,31 @@
+ 			self.findDirectory('B_SYSTEM_PACKAGES_DIRECTORY'))
+ 
+ 	def activateBuildPackage(self, workDir, packagePath, revisionedName):
+-		sysExit(u'activateBuildPackage() unsupported')
++		sysExit('activateBuildPackage() unsupported')
+ 
+ 	def deactivateBuildPackage(self, workDir, activeBuildPackage,
+ 			revisionedName):
+-		sysExit(u'deactivateBuildPackage() unsupported')
++		sysExit('deactivateBuildPackage() unsupported')
+ 
+ 	def getCrossToolsBasePrefix(self, workDir):
+-		sysExit(u'getCrossToolsBasePrefix() unsupported')
++		sysExit('getCrossToolsBasePrefix() unsupported')
+ 
+ 	def getCrossToolsBinPaths(self, workDir):
+-		sysExit(u'getCrossToolsBinPaths() unsupported')
++		sysExit('getCrossToolsBinPaths() unsupported')
+ 
+ 	def getInstallDestDir(self, workDir):
+-		sysExit(u'getInstallDestDir() unsupported')
++		sysExit('getInstallDestDir() unsupported')
+ 
+ 	def getImplicitProvides(self, forBuildHost):
+ 		return set()
+ 
+ 	def setupNonChrootBuildEnvironment(self, workDir, secondaryArchitecture,
+ 			requiredPackages):
+-		sysExit(u'setupNonChrootBuildEnvironment() unsupported')
++		sysExit('setupNonChrootBuildEnvironment() unsupported')
+ 
+ 	def cleanNonChrootBuildEnvironment(self, workDir, secondaryArchitecture,
+ 			buildOK):
+-		sysExit(u'cleanNonChrootBuildEnvironment() unsupported')
++		sysExit('cleanNonChrootBuildEnvironment() unsupported')
+ 
+ # -----------------------------------------------------------------------------
+ 
+RefactoringTool: Wrote changes to ./HaikuPorter/BuildPlatform.py
+RefactoringTool: Refactored ./HaikuPorter/DependencyAnalyzer.py
+--- ./HaikuPorter/DependencyAnalyzer.py	(original)
++++ ./HaikuPorter/DependencyAnalyzer.py	(refactored)
+@@ -133,20 +133,20 @@
+ 		if not self.portNodes:
+ 			self._doInitialDependencyResolution()
+ 
+-		print 'Required system packages:'
++		print('Required system packages:')
+ 		for packageNode in sorted(self.systemPackageNodes,
+ 				key=lambda packageNode: packageNode.name):
+-			print '	 %s' % packageNode.name
+-
+-		print 'Ports required by haikuporter:'
++			print('	 %s' % packageNode.name)
++
++		print('Ports required by haikuporter:')
+ 		for packageNode in sorted(self.haikuporterRequires,
+ 				key=lambda packageNode: packageNode.name):
+-			print '	 %s' % packageNode.portNode.name
+-
+-		print 'Ports depending cyclically on each other:'
++			print('	 %s' % packageNode.portNode.name)
++
++		print('Ports depending cyclically on each other:')
+ 		for node in sorted(sorted(self.cyclicNodes, key=lambda node: node.name),
+ 				key=lambda node: node.outdegree):
+-			print '	 %s (out-degree %d)' % (node.name, node.outdegree)
++			print('	 %s (out-degree %d)' % (node.name, node.outdegree))
+ 
+ 	def getBuildOrderForBootstrap(self):
+ 		if not self.portNodes:
+@@ -162,13 +162,13 @@
+ 		while nodes:
+ 			lastDoneCount = len(done)
+ 			for node in sorted(list(nodes), key=lambda node: node.name):
+-				print '# checking if %s is buildable ...' % node.name
++				print('# checking if %s is buildable ...' % node.name)
+ 				if node.isBuildable(self.repository.path, doneRepositoryPath):
+ 					done.append(node.name)
+ 					nodes.remove(node)
+ 					node.markAsBuilt(doneRepositoryPath)
+ 			if lastDoneCount == len(done):
+-				sysExit(u"None of these cyclic dependencies can be built:\n\t"
++				sysExit("None of these cyclic dependencies can be built:\n\t"
+ 						+ "\n\t".join(sorted([node.name for node in nodes])))
+ 
+ 		shutil.rmtree(doneRepositoryPath)
+@@ -182,7 +182,7 @@
+ 		# depend on. A package automatically depends on the port it belongs to.
+ 		# Furthermore it depends on the packages its requires specify. Build
+ 		# requires and build prerequires are dependencies for a port.
+-		print 'Resolving dependencies ...'
++		print('Resolving dependencies ...')
+ 
+ 		self._collectDependencyInfos(self.repository.path)
+ 		self._collectSystemPackages()
+@@ -191,7 +191,7 @@
+ 		for portName in sorted(self.repository.portVersionsByName.keys()):
+ 			activePortVersion = self.repository.getActiveVersionOf(portName)
+ 			if not activePortVersion:
+-				print 'Warning: Skipping ' + portName + ', no version active'
++				print('Warning: Skipping ' + portName + ', no version active')
+ 				continue
+ 
+ 			allActivePorts.append(portName + '-' + activePortVersion)
+@@ -217,7 +217,7 @@
+ 		remainingPortNodes = set()
+ 		nonSystemPackageNodes = set()
+ 
+-		for packageNode in self.packageNodes.itervalues():
++		for packageNode in self.packageNodes.values():
+ 			if packageNode.isSystemPackage:
+ 				self.systemPackageNodes.add(packageNode)
+ 			else:
+@@ -298,7 +298,7 @@
+ 		for node in nodes:
+ 			if node.outdegree == 0:
+ 				outdegreeZeroStack.append(node)
+-				print '[%s] has out-degree 0' % node.name
++				print('[%s] has out-degree 0' % node.name)
+ 
+ 		# remove the acyclic part of the graph that depends on nothing else
+ 		while outdegreeZeroStack:
+@@ -323,8 +323,8 @@
+ 			try:
+ 				packageInfo = PackageInfo(dependencyInfoFile)
+ 			except CalledProcessError:
+-				print ('Warning: Ignoring broken dependency-info file "%s"'
+-					   % dependencyInfoFile)
++				print(('Warning: Ignoring broken dependency-info file "%s"'
++					   % dependencyInfoFile))
+ 			self.providesManager.addProvidesFromPackageInfo(packageInfo)
+ 			self.packageInfos[packageInfo.versionedName] = packageInfo
+ 
+@@ -340,8 +340,8 @@
+ 			try:
+ 				packageInfo = PackageInfo(packageFile)
+ 			except CalledProcessError:
+-				print ('Warning: Ignoring broken package file "%s"'
+-					   % packageFile)
++				print(('Warning: Ignoring broken package file "%s"'
++					   % packageFile))
+ 			self.providesManager.addProvidesFromPackageInfo(packageInfo)
+ 			self.packageInfos[packageInfo.versionedName] = packageInfo
+ 
+@@ -356,8 +356,8 @@
+ 												   isSystemPackage)
+ 				dependencies.add(packageNode)
+ 			else:
+-				print('Warning: Ignoring unresolvable requires "%s" of package'
+-					' %s in %s' % (requires, packageID, portID))
++				print(('Warning: Ignoring unresolvable requires "%s" of package'
++					' %s in %s' % (requires, packageID, portID)))
+ 		return dependencies
+ 
+ 	def _getPortNode(self, portID):
+@@ -394,5 +394,5 @@
+ 		self._getPortNode(portID)
+ 
+ 		if packageID not in self.packageNodes:
+-			sysExit(u'package "%s" doesn\'t seem to exist' % packageID)
++			sysExit('package "%s" doesn\'t seem to exist' % packageID)
+ 		return self.packageNodes[packageID]
+RefactoringTool: Wrote changes to ./HaikuPorter/DependencyAnalyzer.py
+RefactoringTool: Refactored ./HaikuPorter/DependencyResolver.py
+--- ./HaikuPorter/DependencyResolver.py	(original)
++++ ./HaikuPorter/DependencyResolver.py	(refactored)
+@@ -236,7 +236,7 @@
+ 				return
+ 			if getOption('getDependencies'):
+ 				try:
+-					print('Fetching package for ' + str(requires) + ' ...')
++					print(('Fetching package for ' + str(requires) + ' ...'))
+ 					output = check_output(['pkgman', 'install', '-y', str(requires)])
+ 					for pkg in re.findall(r'://.*/([^/\n]+\.hpkg)', output):
+ 						pkginfo = PackageInfo('/boot/system/packages/' + pkg)
+@@ -283,7 +283,7 @@
+ 			packageInfo = PackageInfo(packageInfoFile)
+ 			DependencyResolver.packageInfoCache[packageInfoFile] = packageInfo
+ 		except CalledProcessError:
+-			message = u'failed to parse "%s"' % packageInfoFile
++			message = 'failed to parse "%s"' % packageInfoFile
+ 			sysExit(message) if fatal else warn(message)
+ 			return None
+ 
+RefactoringTool: Wrote changes to ./HaikuPorter/DependencyResolver.py
+RefactoringTool: Refactoring ./HaikuPorter/Display.py
+RefactoringTool: Refactoring ./HaikuPorter/Options.py
+RefactoringTool: Refactoring ./HaikuPorter/Main.py
+RefactoringTool: No changes to ./HaikuPorter/Display.py
+RefactoringTool: No changes to ./HaikuPorter/Display.py
+RefactoringTool: Wrote changes to ./HaikuPorter/Display.py
+RefactoringTool: Refactored ./HaikuPorter/Options.py
+--- ./HaikuPorter/Options.py	(original)
++++ ./HaikuPorter/Options.py	(refactored)
+@@ -342,8 +342,8 @@
+ 		setattr(__Options__, 'noSourcePackages', True)
+ 	elif not isCommandAvailable('git'):
+ 		if not getOption('doBootstrap'):
+-			warn(u"deactivating creation of source packages as 'git' is not "
+-				 u"available")
++			warn("deactivating creation of source packages as 'git' is not "
++				 "available")
+ 		setattr(__Options__, 'noSourcePackages', True)
+ 
+ 	return (__Options__, args)
+RefactoringTool: Wrote changes to ./HaikuPorter/Options.py
+RefactoringTool: Refactoring ./HaikuPorter/PackageInfo.py
+RefactoringTool: Refactoring ./HaikuPorter/Package.py
+RefactoringTool: Refactored ./HaikuPorter/PackageInfo.py
+--- ./HaikuPorter/PackageInfo.py	(original)
++++ ./HaikuPorter/PackageInfo.py	(refactored)
+@@ -76,7 +76,7 @@
+ 		elif path.endswith('.DependencyInfo'):
+ 			self._parseFromDependencyInfoFile()
+ 		else:
+-			sysExit(u"don't know how to extract package-info from " + path)
++			sysExit("don't know how to extract package-info from " + path)
+ 
+ 	@property
+ 	def versionedName(self):
+@@ -107,7 +107,7 @@
+ 
+ 		if prune:
+ 			with open(cls.hpkgCachePath, 'wb') as cacheFile:
+-				for entry in cls.hpkgCache.itervalues():
++				for entry in cls.hpkgCache.values():
+ 					pickle.dump(entry, cacheFile, pickle.HIGHEST_PROTOCOL)
+ 
+ 	@classmethod
+@@ -189,7 +189,7 @@
+ 	def _extractField(self, output, fieldName):
+ 		result = self._extractOptionalField(output, fieldName)
+ 		if not result:
+-			sysExit(u'Failed to get %s of package "%s"' % (fieldName, self.path))
++			sysExit('Failed to get %s of package "%s"' % (fieldName, self.path))
+ 		return result
+ 
+ 	def _extractOptionalField(self, output, fieldName):
+RefactoringTool: Wrote changes to ./HaikuPorter/PackageInfo.py
+RefactoringTool: Refactoring ./HaikuPorter/PackageRepository.py
+RefactoringTool: Refactored ./HaikuPorter/BuildMaster.py
+--- ./HaikuPorter/BuildMaster.py	(original)
++++ ./HaikuPorter/BuildMaster.py	(refactored)
+@@ -815,11 +815,11 @@
+ 		if paramiko:
+ 			self.remoteAvailable = True
+ 		else:
+-			print 'Remote mode unavailable'
++			print('Remote mode unavailable')
+ 			if self.localBuilders == 0:
+ 				self.localBuilders = 1
+ 
+-		print 'Local builders count: ' + str(self.localBuilders)
++		print('Local builders count: ' + str(self.localBuilders))
+ 
+ 		logHandler = logging.FileHandler(
+ 			os.path.join(self.buildOutputBaseDir, 'master.log'))
+@@ -868,7 +868,7 @@
+ 				self.activeBuilders.append(builder)
+ 
+ 		if len(self.activeBuilders) == 0:
+-			sysExit(u'no builders available')
++			sysExit('no builders available')
+ 
+ 		self.availableBuilders += self.activeBuilders
+ 
+@@ -967,7 +967,7 @@
+ 			head = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+ 				cwd=self.portsTreePath, stderr=subprocess.STDOUT)
+ 		except:
+-			warn(u'unable to determine origin and revision of haikuports tree')
++			warn('unable to determine origin and revision of haikuports tree')
+ 			origin = '<unknown> '
+ 			head = '<unknown> '
+ 
+@@ -1021,7 +1021,7 @@
+ 			with self.builderCondition:
+ 				if len(self.activeBuilders) == 0:
+ 					self._setBuildStatus('all builders lost')
+-					sysExit(u'all builders lost')
++					sysExit('all builders lost')
+ 
+ 				if len(self.availableBuilders) == 0:
+ 					self._setBuildStatus('waiting for available builders')
+RefactoringTool: Wrote changes to ./HaikuPorter/BuildMaster.py
+RefactoringTool: Refactored ./HaikuPorter/PackageRepository.py
+--- ./HaikuPorter/PackageRepository.py	(original)
++++ ./HaikuPorter/PackageRepository.py	(refactored)
+@@ -70,7 +70,7 @@
+ 	def obsoletePackage(self, path, reason=None):
+ 		packageFileName = os.path.basename(path)
+ 		if not self.quiet:
+-			print('\tobsoleting package {}: {}'.format(packageFileName, reason))
++			print(('\tobsoleting package {}: {}'.format(packageFileName, reason)))
+ 
+ 		os.rename(path, os.path.join(self.obsoleteDir, packageFileName))
+ 
+@@ -188,10 +188,10 @@
+ 
+ 		for package in self.packageInfoList():
+ 			if self.verbose:
+-				print('checking package {}'.format(package.path))
++				print(('checking package {}'.format(package.path)))
+ 
+ 			try:
+ 				resolver.determineRequiredPackagesFor([package.path])
+ 			except LookupError as error:
+-				print('{}:\n{}\n'.format(os.path.relpath(package.path,
+-						self.packagesPath), prefixLines('\t', str(error))))
++				print(('{}:\n{}\n'.format(os.path.relpath(package.path,
++						self.packagesPath), prefixLines('\t', str(error)))))
+RefactoringTool: Wrote changes to ./HaikuPorter/PackageRepository.py
+RefactoringTool: Refactored ./HaikuPorter/Main.py
+--- ./HaikuPorter/Main.py	(original)
++++ ./HaikuPorter/Main.py	(refactored)
+@@ -41,9 +41,9 @@
+ 				traceback.print_exc()
+ 			elif type(exception).__name__ == "SystemExit":
+ 				if type(exception.code).__name__ != "int":
+-					print exception.code
++					print(exception.code)
+ 			else:
+-				print exception
++				print(exception)
+ 			exit(1)
+ 
+ 	def run(self, args):
+@@ -145,15 +145,15 @@
+ 
+ 		# if requested, print the location of the haikuports source tree
+ 		if self.options.tree:
+-			print self.treePath
++			print(self.treePath)
+ 			return
+ 
+ 		# if requested, scan the ports tree for problems
+ 		if self.options.lint:
+ 			if (not buildPlatform.isHaiku
+ 				and Configuration.getLicensesDirectory() is None):
+-				sysExit(u'LICENSES_DIRECTORY must be set in configuration on '
+-					u'this build platform!')
++				sysExit('LICENSES_DIRECTORY must be set in configuration on '
++					'this build platform!')
+ 			self._createRepositoryIfNeeded(True)
+ 			if not args:
+ 				self._checkSourceTree("")
+@@ -172,15 +172,15 @@
+ 					self.options.printFilenames)
+ 
+ 			for name in sorted(allNames):
+-				print name
++				print(name)
+ 			return
+ 
+ 		# if requested, search for a port
+ 		if self.options.search or self.options.searchPackages:
+ 			if not args:
+-				sysExit(u'You need to specify a search string.\n'
+-						u"Invoke '" + sys.argv[0] + u" -h' for usage "
+-						u"information.")
++				sysExit('You need to specify a search string.\n'
++						"Invoke '" + sys.argv[0] + " -h' for usage "
++						"information.")
+ 			self._createRepositoryIfNeeded(True)
+ 
+ 			for arg in args:
+@@ -191,14 +191,14 @@
+ 						portID = portName + '-' + versions[0]
+ 						port = self.repository.allPorts[portID]
+ 						if self.options.printRaw:
+-							print portName
++							print(portName)
+ 						else:
+-							print port.category + '::' + portName
++							print(port.category + '::' + portName)
+ 				else:
+ 					packageNames = self.repository.searchPackages(arg,
+ 						self.options.printFilenames)
+ 					for packageName in packageNames:
+-						print packageName
++						print(packageName)
+ 			return
+ 
+ 		# if requested, print the ports related to the supplied files
+@@ -208,14 +208,14 @@
+ 			if self.options.activeVersionsOnly:
+ 				allPorts = self.repository.activePorts
+ 			else:
+-				allPorts = self.repository.allPorts.itervalues()
++				allPorts = iter(self.repository.allPorts.values())
+ 
+ 			files = [arg if os.path.isabs(arg) \
+ 				else os.path.join(self.treePath, arg) for arg in args]
+ 
+ 			for port in allPorts:
+ 				if port.referencesFiles(files):
+-					print port.versionedName
++					print(port.versionedName)
+ 
+ 			return
+ 
+@@ -224,7 +224,7 @@
+ 			self._createRepositoryIfNeeded(True)
+ 
+ 			ports = set()
+-			for port in self.repository.allPorts.itervalues():
++			for port in self.repository.allPorts.values():
+ 				try:
+ 					port.parseRecipeFileIfNeeded()
+ 				except:
+@@ -234,14 +234,14 @@
+ 					if package.hpkgName in args:
+ 						ports.add(port.versionedName)
+ 
+-			print '\n'.join(sorted(ports))
++			print('\n'.join(sorted(ports)))
+ 			return
+ 
+ 		if self.options.location:
+ 			if not args:
+-				sysExit(u'You need to specify a search string.\n'
+-						u"Invoke '" + sys.argv[0] + u" -h' for usage "
+-						u"information.")
++				sysExit('You need to specify a search string.\n'
++						"Invoke '" + sys.argv[0] + " -h' for usage "
++						"information.")
+ 			# Provide the installed location of a port (for quick editing)
+ 			self._createRepositoryIfNeeded(True)
+ 			portNames = self.repository.searchPorts(args[0])
+@@ -249,7 +249,7 @@
+ 				versions = self.repository.portVersionsByName[portName]
+ 				portID = portName + '-' + versions[0]
+ 				port = self.repository.allPorts[portID]
+-				print os.path.join(self.treePath, port.category, portName)
++				print(os.path.join(self.treePath, port.category, portName))
+ 			return
+ 
+ 		if self.options.portsfile:
+@@ -266,7 +266,7 @@
+ 				else:
+ 					portsfileAsRequires.append(portSpec['name'])
+ 			if not portsfileAsRequires:
+-				sysExit(u"The given ports-file doesn't contain any ports.")
++				sysExit("The given ports-file doesn't contain any ports.")
+ 			self.shellVariables['portsfileAsRequires'] \
+ 				= '\n'.join(portsfileAsRequires)
+ 
+@@ -288,16 +288,16 @@
+ 			# has been specified on the cmdline
+ 			metaPortSpec = 'meta_portsfile-1'
+ 			if metaPortSpec not in self.repository.allPorts:
+-				sysExit(u"no recipe found for '%s'" % metaPortSpec)
++				sysExit("no recipe found for '%s'" % metaPortSpec)
+ 			self.portSpecs.append(
+ 				self._splitPortSpecIntoNameVersionAndRevision(metaPortSpec))
+ 		elif self.options.doBootstrap:
+ 			# first untangle and build all ports with circular dependencies
+ 			dependencyAnalyzer = DependencyAnalyzer(self.repository)
+ 			portsToBuild = dependencyAnalyzer.getBuildOrderForBootstrap()
+-			print 'Untangling the ports with circular dependencies gave this:'
+-			print "	 " + "\n  ".join(portsToBuild)
+-			print 'After that, all other available ports will be built, too'
++			print('Untangling the ports with circular dependencies gave this:')
++			print("	 " + "\n  ".join(portsToBuild))
++			print('After that, all other available ports will be built, too')
+ 			portsNotYetBuilt = []
+ 			for portId in portsToBuild:
+ 				port = self.repository.allPorts[portId]
+@@ -305,21 +305,21 @@
+ 				if (mainPackage
+ 					and os.path.exists(
+ 						self.packagesPath + '/' + mainPackage.hpkgName)):
+-					print('skipping port %s, since its main package already '
+-						'exists' % portId)
++					print(('skipping port %s, since its main package already '
++						'exists' % portId))
+ 					continue
+ 				portsNotYetBuilt.append(portId)
+ 				bootstrapPorts.add(portId)
+ 			# add all other ports, such that all available ports will be built
+-			for portId in self.repository.allPorts.keys():
++			for portId in list(self.repository.allPorts.keys()):
+ 				if portId not in bootstrapPorts:
+ 					port = self.repository.allPorts[portId]
+ 					mainPackage = port.mainPackage
+ 					if (mainPackage
+ 						and os.path.exists(
+ 							self.packagesPath + '/' + mainPackage.hpkgName)):
+-						print('skipping port %s, since its main package '
+-							'already exists' % portId)
++						print(('skipping port %s, since its main package '
++							'already exists' % portId))
+ 						continue
+ 					portsNotYetBuilt.append(portId)
+ 			# add all ports as if they were given on the cmdline
+@@ -330,8 +330,8 @@
+ 		else:
+ 			# if there is no argument given, exit
+ 			if not args:
+-				sysExit(u'You need to specify a search string.\nInvoke '
+-						u"'" + sys.argv[0] + u" -h' for usage information.")
++				sysExit('You need to specify a search string.\nInvoke '
++						"'" + sys.argv[0] + " -h' for usage information.")
+ 			self.portSpecs = [
+ 				self._splitPortSpecIntoNameVersionAndRevision(port)
+ 					for port in args
+@@ -370,7 +370,7 @@
+ 								'not found in repository')
+ 							continue
+ 
+-						sysExit(portSpec['name'] + u' not found in repository')
++						sysExit(portSpec['name'] + ' not found in repository')
+ 
+ 				portSpec['name'] = portName
+ 
+@@ -388,8 +388,8 @@
+ 								+ ' can be built')
+ 						continue
+ 					else:
+-						sysExit(u'No version of ' + portSpec['name']
+-							+ u' can be built')
++						sysExit('No version of ' + portSpec['name']
++							+ ' can be built')
+ 				portID = portSpec['name'] + '-' + version
+ 
+ 			if portID not in allPorts:
+@@ -397,7 +397,7 @@
+ 					self.buildMaster.addSkipped(portID, 'not found in tree')
+ 					continue
+ 
+-				sysExit(portID + u' not found in tree.')
++				sysExit(portID + ' not found in tree.')
+ 
+ 			port = allPorts[portID]
+ 
+@@ -433,7 +433,7 @@
+ 														 False)
+ 			whyID = whySpec['name'] + '-' + whySpec['version']
+ 			if whyID not in allPorts:
+-				sysExit(whyID + u' not found in tree.')
++				sysExit(whyID + ' not found in tree.')
+ 			requiredPort = allPorts[whyID]
+ 			self._validateMainPort(requiredPort)
+ 			port.whyIsPortRequired(self.packagesPath, requiredPort)
+@@ -467,11 +467,11 @@
+ 
+ 		# show summary of policy violations
+ 		if Policy.violationsByPort:
+-			print 'Summary of policy violations in this session:'
++			print('Summary of policy violations in this session:')
+ 			for portName in sorted(Policy.violationsByPort.keys()):
+-				print 'Policy violations of %s:' + portName
++				print('Policy violations of %s:' + portName)
+ 				for violation in Policy.violationsByPort[portName]:
+-					print '\t' + violation
++					print('\t' + violation)
+ 
+ 		if self.options.buildMaster:
+ 			if self.options.display:
+@@ -482,33 +482,33 @@
+ 				self.buildMaster.runBuilds()
+ 
+ 	def _listDependencies(self, port):
+-		print '-' * 70
+-		print 'dependencies of ' + port.versionedName
++		print('-' * 70)
++		print('dependencies of ' + port.versionedName)
+ 
+ 		presentDependencyPackages = []
+ 		buildDependencies = port.resolveDependencies(
+ 			self.packageRepositories, self.options.test,
+ 			presentDependencyPackages)
+ 
+-		print 'packages already present:'
++		print('packages already present:')
+ 		presentDependencyPackageNames = [os.path.basename(package)
+ 			for package in presentDependencyPackages]
+ 		for name in sorted(presentDependencyPackageNames):
+-			print "\t" + name
+-		print ''
+-
+-		print 'packages that need to be built:'
++			print("\t" + name)
++		print('')
++
++		print('packages that need to be built:')
+ 		for dependency in buildDependencies:
+ 			packageInfoFileName = os.path.basename(dependency)
+ 			packageID = packageInfoFileName[:packageInfoFileName.rindex('.')]
+ 			try:
+ 				portID = self.repository.getPortIdForPackageId(packageID)
+-				print "\t" + packageID + ' -> ' + portID
++				print("\t" + packageID + ' -> ' + portID)
+ 
+ 			except KeyError:
+-				sysExit(u'Inconsistency: ' + port.versionedName
+-					+ u' requires ' + packageID
+-					+ u' but no corresponding port was found!')
++				sysExit('Inconsistency: ' + port.versionedName
++					+ ' requires ' + packageID
++					+ ' but no corresponding port was found!')
+ 
+ 	def _validateMainPort(self, port, revision=None):
+ 		"""Parse the recipe file for the given port and get any required
+@@ -519,14 +519,14 @@
+ 
+ 		# if a specific revision has been given, check if this port matches it
+ 		if revision and port.revision != revision:
+-			sysExit((u"Port %s isn't available in revision %s (found revision "
+-					+ u'%s instead)')
++			sysExit(("Port %s isn't available in revision %s (found revision "
++					+ '%s instead)')
+ 					% (port.versionedName, revision, port.revision))
+ 
+ 		# warn when the port is not buildable on this architecture
+ 		if not port.isBuildableOnTargetArchitecture():
+ 			status = port.statusOnTargetArchitecture
+-			message = u'Port {} is {} on this architecture.'.format(
++			message = 'Port {} is {} on this architecture.'.format(
+ 				port.versionedName, status)
+ 			warn(message)
+ 			if self.options.buildMaster:
+@@ -534,22 +534,22 @@
+ 				return False
+ 
+ 			if not self.options.yes:
+-				answer = raw_input('Continue (y/n + enter)? ')
++				answer = input('Continue (y/n + enter)? ')
+ 				if answer == '':
+ 					sys.exit(1)
+ 				if answer[0].lower() == 'y':
+-					print ' ok'
++					print(' ok')
+ 				else:
+ 					sys.exit(1)
+ 
+ 		if not self.options.ignoreMessages and port.recipeKeys['MESSAGE']:
+-			print port.recipeKeys['MESSAGE']
++			print(port.recipeKeys['MESSAGE'])
+ 			if not self.options.yes:
+-				answer = raw_input('Continue (y/n + enter)? ')
++				answer = input('Continue (y/n + enter)? ')
+ 				if answer == '':
+ 					sys.exit(1)
+ 				if answer[0].lower() == 'y':
+-					print ' ok'
++					print(' ok')
+ 				else:
+ 					sys.exit(1)
+ 
+@@ -563,9 +563,9 @@
+ 
+ 		self._setupForPossiblyObsoletePort(port)
+ 
+-		print '=' * 70
+-		print port.category + '::' + port.versionedName
+-		print '=' * 70
++		print('=' * 70)
++		print(port.category + '::' + port.versionedName)
++		print('=' * 70)
+ 
+ 		allPorts = self.repository.allPorts
+ 
+@@ -584,9 +584,9 @@
+ 			buildDependencies = port.resolveDependencies(
+ 				self.packageRepositories, testPort)
+ 
+-		print 'The following build dependencies were found:'
++		print('The following build dependencies were found:')
+ 		for dependency in buildDependencies:
+-			print('\t' + dependency)
++			print(('\t' + dependency))
+ 
+ 		requiredPortsToBuild = []
+ 		requiredPortIDs = set()
+@@ -610,18 +610,18 @@
+ 					requiredPortsToBuild.append(requiredPort)
+ 					requiredPortIDs.add(portID)
+ 			except KeyError:
+-				sysExit(u'Inconsistency: ' + port.versionedName
+-						 + u' requires ' + packageID
+-						 + u' but no corresponding port was found!')
++				sysExit('Inconsistency: ' + port.versionedName
++						 + ' requires ' + packageID
++						 + ' but no corresponding port was found!')
+ 
+ 		if requiredPortsToBuild:
+ 			if port in requiredPortsToBuild:
+-				sysExit(u'Port ' + port.versionedName + ' depends on itself')
+-
+-			print 'The following required ports will be built first:'
++				sysExit('Port ' + port.versionedName + ' depends on itself')
++
++			print('The following required ports will be built first:')
+ 			for requiredPort in requiredPortsToBuild:
+-				print('\t' + requiredPort.category + '::'
+-					  + requiredPort.versionedName)
++				print(('\t' + requiredPort.category + '::'
++					  + requiredPort.versionedName))
+ 			for requiredPort in requiredPortsToBuild:
+ 				if self.options.buildMaster:
+ 					requiredPort.parseRecipeFile(True)
+@@ -632,8 +632,8 @@
+ 							'Skipping ' + port.versionedName + ', dependency '
+ 								+ requiredPort.versionedName
+ 								+ ' cannot be built: ' + str(exception))
+-						sysExit(u'Dependency of ' + port.versionedName
+-							+ u' cannot be built')
++						sysExit('Dependency of ' + port.versionedName
++							+ ' cannot be built')
+ 				else:
+ 					self._buildPort(requiredPort, True, False)
+ 
+@@ -652,10 +652,10 @@
+ 
+ 		targetPath = self._setupForPossiblyObsoletePort(port)
+ 
+-		print '-' * 70
+-		print port.category + '::' + port.versionedName
+-		print '\t' + port.recipeFilePath
+-		print '-' * 70
++		print('-' * 70)
++		print(port.category + '::' + port.versionedName)
++		print('\t' + port.recipeFilePath)
++		print('-' * 70)
+ 
+ 		# pass-on options to port
+ 		port.forceOverride = self.options.force
+@@ -696,7 +696,7 @@
+ 			if not os.path.exists(targetPath):
+ 				os.makedirs(targetPath)
+ 
+-			warn(u'building obsolete port, packages will be put in {}'.format(
++			warn('building obsolete port, packages will be put in {}'.format(
+ 					targetPath))
+ 
+ 			# make sure the correct dependencyInfo-file has been created
+@@ -708,9 +708,9 @@
+ 	def _testPort(self, port):
+ 		"""Build a single port"""
+ 
+-		print '-' * 70
+-		print 'TESTING ' + port.category + '::' + port.versionedName
+-		print '-' * 70
++		print('-' * 70)
++		print('TESTING ' + port.category + '::' + port.versionedName)
++		print('-' * 70)
+ 
+ 		# pass-on options to port
+ 		port.beQuiet = self.options.quiet
+@@ -724,8 +724,8 @@
+ 			targetHaikuPackage = Configuration.getCrossDevelPackage()
+ 			if not targetHaikuPackage:
+ 				if not buildPlatform.isHaiku:
+-					sysExit(u'On this platform a haiku cross devel package '
+-						u'must be specified (via --cross-devel-package)')
++					sysExit('On this platform a haiku cross devel package '
++						'must be specified (via --cross-devel-package)')
+ 				targetHaikuPackage = ('/boot/system/develop/cross/'
+ 					+ 'haiku_cross_devel_sysroot_%s.hpkg') \
+ 					% targetArchitecture
+@@ -733,8 +733,8 @@
+ 			if (not buildPlatform.isHaiku and not self.shallowInitIsEnough
+ 				and not (getOption('createSourcePackagesForBootstrap')
+ 					or getOption('createSourcePackages'))):
+-				sysExit(u'Native building not supported on this platform '
+-					u'(%s)' % buildPlatform.name)
++				sysExit('Native building not supported on this platform '
++					'(%s)' % buildPlatform.name)
+ 
+ 		self.shellVariables = {
+ 			'haikuVersion': 'r1~alpha1',	# just a dummy value for compatibility with old recipes
+@@ -782,7 +782,7 @@
+ 
+ 	def _updatePortsTree(self):
+ 		"""Get/Update the port tree via git"""
+-		print 'Refreshing the port tree: %s' % self.treePath
++		print('Refreshing the port tree: %s' % self.treePath)
+ 		ensureCommandIsAvailable('git')
+ 		if os.path.exists(self.treePath + '/.git'):
+ 			check_call(['git', 'pull'], cwd=self.treePath)
+@@ -792,7 +792,7 @@
+ 	def _splitPortSpecIntoNameVersionAndRevision(self, portSpecString):
+ 		elements = portSpecString.split('-')
+ 		if len(elements) < 1 or len(elements) > 3:
+-			sysExit(u'Invalid port specifier ' + portSpecString)
++			sysExit('Invalid port specifier ' + portSpecString)
+ 
+ 		return	{
+ 			'specifier': portSpecString,
+@@ -807,9 +807,8 @@
+ 		dirList = os.listdir(self.treePath)
+ 		for item in dirList:
+ 			if os.path.isdir(item) and item[0] != '.' and '-' in item:
+-				subdirList = os.listdir(item)
++				subdirList = sorted(os.listdir(item))
+ 				# remove items starting with '.'
+-				subdirList.sort()
+ 				while subdirList[0][0] == '.':
+ 					del subdirList[0]
+ 
+@@ -825,7 +824,7 @@
+ 
+ 	def _checkSourceTree(self, portArgument):
+ 		if portArgument:
+-			print 'Checking ports of: ' + portArgument
++			print('Checking ports of: ' + portArgument)
+ 
+ 			allPorts = self.repository.allPorts
+ 			portVersionsByName = self.repository.portVersionsByName
+@@ -833,7 +832,7 @@
+ 			if portArgument in allPorts:
+ 				# Full port name / ver
+ 				port = allPorts[portArgument]
+-				print '%s	[%s]' % (portArgument, port.category)
++				print('%s	[%s]' % (portArgument, port.category))
+ 				port.validateRecipeFile(True) # exit 1 if fail
+ 				return
+ 			elif portArgument in portVersionsByName:
+@@ -842,32 +841,32 @@
+ 				for version in portVersionsByName[portArgument]:
+ 					portID = portArgument + '-' + version
+ 					port = allPorts[portID]
+-					print '%s	[%s]' % (portID, port.category)
++					print('%s	[%s]' % (portID, port.category))
+ 					try:
+ 						port.validateRecipeFile(True)
+ 					except SystemExit as e:
+ 						somethingFailed = True
+-						print e.code
++						print(e.code)
+ 				if somethingFailed:
+ 					sys.exit(1)
+ 			else:
+ 				# Unknown
+-				sysExit(u'%s is not a known port!' % portArgument)
++				sysExit('%s is not a known port!' % portArgument)
+ 
+ 		else:
+-			print 'Checking HaikuPorts tree at: ' + self.treePath
++			print('Checking HaikuPorts tree at: ' + self.treePath)
+ 			allPorts = self.repository.allPorts
+ 			portVersionsByName = self.repository.portVersionsByName
+ 			somethingFailed = False
+-			for portName in sorted(portVersionsByName.keys(), key=unicode.lower):
++			for portName in sorted(list(portVersionsByName.keys()), key=str.lower):
+ 				for version in portVersionsByName[portName]:
+ 					portID = portName + '-' + version
+ 					port = allPorts[portID]
+-					print '%s	[%s]' % (portID, port.category)
++					print('%s	[%s]' % (portID, port.category))
+ 					try:
+ 						port.validateRecipeFile(True)
+ 					except SystemExit as e:
+-						print e.code
++						print(e.code)
+ 						somethingFailed = True
+ 			if somethingFailed:
+ 				sys.exit(1)
+@@ -890,10 +889,10 @@
+ 					pass
+ 
+ 		if recipeFormatVersion > getRecipeFormatVersion():
+-			sysExit(u'The version of the recipe file format used in the ports '
+-					u'tree is newer than the one supported by haikuporter.\n'
+-					u'Please upgrade haikuporter.')
++			sysExit('The version of the recipe file format used in the ports '
++					'tree is newer than the one supported by haikuporter.\n'
++					'Please upgrade haikuporter.')
+ 		if recipeFormatVersion < getRecipeFormatVersion():
+-			sysExit(u'The version of the recipe file format used in the ports '
+-					u'tree is older than the one supported by haikuporter.\n'
+-					u'Please upgrade the ports tree.')
++			sysExit('The version of the recipe file format used in the ports '
++					'tree is older than the one supported by haikuporter.\n'
++					'Please upgrade the ports tree.')
+RefactoringTool: Wrote changes to ./HaikuPorter/Main.py
+RefactoringTool: Refactoring ./HaikuPorter/Policy.py
+RefactoringTool: Refactored ./HaikuPorter/Package.py
+--- ./HaikuPorter/Package.py	(original)
++++ ./HaikuPorter/Package.py	(refactored)
+@@ -107,7 +107,7 @@
+ 		elif Architectures.ANY in self.recipeKeys['ARCHITECTURES']:
+ 			self.architecture = Architectures.ANY
+ 		else:
+-			sysExit(u'package %s cannot be built for architecture %s'
++			sysExit('package %s cannot be built for architecture %s'
+ 					% (self.versionedName, port.targetArchitecture))
+ 
+ 		self.fullVersionedName = self.versionedName + '-' + self.architecture
+@@ -186,7 +186,7 @@
+ 		obsoleteDir = packagesPath + '/.obsolete'
+ 		packageFile = packagesPath + '/' + self.hpkgName
+ 		if os.path.exists(packageFile):
+-			print '\tobsoleting package ' + self.hpkgName
++			print('\tobsoleting package ' + self.hpkgName)
+ 			obsoletePackage = obsoleteDir + '/' + self.hpkgName
+ 			if not os.path.exists(obsoleteDir):
+ 				os.mkdir(obsoleteDir)
+@@ -340,11 +340,11 @@
+ 
+ 			infoFile.write('description\t\t"')
+ 			infoFile.write(
+-				escapeForPackageInfo(u'\n'.join(self.recipeKeys['DESCRIPTION'])))
++				escapeForPackageInfo('\n'.join(self.recipeKeys['DESCRIPTION'])))
+ 			infoFile.write('"\n')
+ 
+-			infoFile.write(u'packager\t\t"' + Configuration.getPackager() + u'"\n')
+-			infoFile.write(u'vendor\t\t\t"' + Configuration.getVendor() + u'"\n')
++			infoFile.write('packager\t\t"' + Configuration.getPackager() + '"\n')
++			infoFile.write('vendor\t\t\t"' + Configuration.getVendor() + '"\n')
+ 
+ 			# These keys aren't mandatory so we need to check if they exist
+ 			if self.recipeKeys['LICENSE']:
+@@ -356,7 +356,7 @@
+ 			if self.recipeKeys['COPYRIGHT']:
+ 				infoFile.write('copyrights {\n')
+ 				for aCopyright in self.recipeKeys['COPYRIGHT']:
+-					infoFile.write(u'\t"' + aCopyright + u'"\n')
++					infoFile.write('\t"' + aCopyright + '"\n')
+ 				infoFile.write('}\n')
+ 
+ 			requires = []
+@@ -413,7 +413,7 @@
+ 			# Generate SourceURL lines for all ports, regardless of license.
+ 			# Re-use the download URLs, as specified in the recipe.
+ 			infoFile.write('source-urls {\n')
+-			for index in sorted(self.recipeKeys['SOURCE_URI'].keys(),
++			for index in sorted(list(self.recipeKeys['SOURCE_URI'].keys()),
+ 								cmp=naturalCompare):
+ 				uricount = 1
+ 				for uri in self.recipeKeys['SOURCE_URI'][index]:
+@@ -590,7 +590,7 @@
+ 					= check_output(['git', 'rev-parse', '--short', 'HEAD'],
+ 						cwd=Configuration.getTreePath(), stderr=STDOUT)
+ 			except:
+-				warn(u'unable to determine revision of haikuports tree')
++				warn('unable to determine revision of haikuports tree')
+ 		with open(targetBaseDir + '/ReadMe', 'w') as readmeFile:
+ 			readmeFile.write((
+ 				'These are the sources (and optionally patches) that were\n'
+RefactoringTool: Wrote changes to ./HaikuPorter/Package.py
+RefactoringTool: Refactoring ./HaikuPorter/ProvidesManager.py
+RefactoringTool: Refactoring ./HaikuPorter/RecipeAttributes.py
+RefactoringTool: Refactored ./HaikuPorter/ProvidesManager.py
+--- ./HaikuPorter/ProvidesManager.py	(original)
++++ ./HaikuPorter/ProvidesManager.py	(refactored)
+@@ -6,7 +6,7 @@
+ 
+ # -- Modules ------------------------------------------------------------------
+ 
+-import BuildPlatform
++from . import BuildPlatform
+ from .Configuration import Configuration
+ from .Options import getOption
+ from .PackageInfo import PackageInfo, Resolvable
+RefactoringTool: Wrote changes to ./HaikuPorter/ProvidesManager.py
+RefactoringTool: Refactoring ./HaikuPorter/RecipeTypes.py
+RefactoringTool: Refactored ./HaikuPorter/RecipeAttributes.py
+--- ./HaikuPorter/RecipeAttributes.py	(original)
++++ ./HaikuPorter/RecipeAttributes.py	(refactored)
+@@ -42,21 +42,21 @@
+ 		'indexable': False,
+ 	},
+ 	'HOMEPAGE': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': True,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+ 		'indexable': False,
+ 	},
+ 	'MESSAGE': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.NO,
+ 		'indexable': False,
+ 	},
+ 	'REVISION': {
+-		'type': types.IntType,
++		'type': int,
+ 		'required': True,
+ 		'default': 1,
+ 		'extendable': Extendable.NO,
+@@ -65,42 +65,42 @@
+ 
+ 	# indexable, i.e. per-source attributes
+ 	'ADDITIONAL_FILES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+ 		'indexable': True,
+ 	},
+ 	'CHECKSUM_SHA256': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+ 		'indexable': True,
+ 	},
+ 	'PATCHES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+ 		'indexable': True,
+ 	},
+ 	'SOURCE_DIR': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+ 		'indexable': True,
+ 	},
+ 	'SOURCE_FILENAME': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+ 		'indexable': True,
+ 	},
+ 	'SOURCE_URI': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': True,
+ 		'default': {},
+ 		'extendable': Extendable.NO,
+@@ -144,7 +144,7 @@
+ 		'indexable': False,
+ 	},
+ 	'COPYRIGHT': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.INHERITED,
+@@ -165,42 +165,42 @@
+ 		'indexable': False,
+ 	},
+ 	'GLOBAL_WRITABLE_FILES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+ 		'indexable': False,
+ 	},
+ 	'LICENSE': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.INHERITED,
+ 		'indexable': False,
+ 	},
+ 	'PACKAGE_GROUPS': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+ 		'indexable': False,
+ 	},
+ 	'PACKAGE_NAME': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.DEFAULT,
+ 		'indexable': False,
+ 	},
+ 	'PACKAGE_USERS': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+ 		'indexable': False,
+ 	},
+ 	'PACKAGE_VERSION': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': False,
+ 		'default': None,
+ 		'extendable': Extendable.DEFAULT,
+@@ -214,14 +214,14 @@
+ 		'indexable': False,
+ 	},
+ 	'POST_INSTALL_SCRIPTS': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+ 		'indexable': False,
+ 	},
+ 	'REPLACES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+@@ -242,7 +242,7 @@
+ 		'indexable': False,
+ 	},
+ 	'SUMMARY': {
+-		'type': types.StringType,
++		'type': bytes,
+ 		'required': True,
+ 		'default': None,
+ 		'extendable': Extendable.INHERITED,
+@@ -262,7 +262,7 @@
+ 		'indexable': False,
+ 	},
+ 	'USER_SETTINGS_FILES': {
+-		'type': types.ListType,
++		'type': list,
+ 		'required': False,
+ 		'default': [],
+ 		'extendable': Extendable.DEFAULT,
+RefactoringTool: Wrote changes to ./HaikuPorter/RecipeAttributes.py
+RefactoringTool: No changes to ./HaikuPorter/RecipeTypes.py
+RefactoringTool: No changes to ./HaikuPorter/RecipeTypes.py
+RefactoringTool: Wrote changes to ./HaikuPorter/RecipeTypes.py
+RefactoringTool: Refactoring ./HaikuPorter/RequiresUpdater.py
+RefactoringTool: Refactoring ./HaikuPorter/Port.py
+RefactoringTool: Refactored ./HaikuPorter/RequiresUpdater.py
+--- ./HaikuPorter/RequiresUpdater.py	(original)
++++ ./HaikuPorter/RequiresUpdater.py	(refactored)
+@@ -38,7 +38,7 @@
+ 		try:
+ 			packageInfo = PackageInfo(package)
+ 		except CalledProcessError:
+-			sysExit(u'failed to get provides for package "%s"' % package)
++			sysExit('failed to get provides for package "%s"' % package)
+ 
+ 		self._providesManager.addProvidesFromPackageInfo(packageInfo)
+ 
+@@ -75,8 +75,8 @@
+ 		matchingProvides = self.getMatchingProvides(resolvableExpression)
+ 		if not matchingProvides:
+ 			if self.getMatchingProvides(ResolvableExpression(name)):
+-				sysExit(u'found provides for "%s", but none matching the '
+-					u'version requirement' % requires)
++				sysExit('found provides for "%s", but none matching the '
++					'version requirement' % requires)
+ 			return requires
+ 
+ 		if not matchingProvides.version:
+RefactoringTool: Wrote changes to ./HaikuPorter/RequiresUpdater.py
+RefactoringTool: Refactoring ./HaikuPorter/ShellScriptlets.py
+RefactoringTool: Refactored ./HaikuPorter/ShellScriptlets.py
+--- ./HaikuPorter/ShellScriptlets.py	(original)
++++ ./HaikuPorter/ShellScriptlets.py	(refactored)
+@@ -49,12 +49,12 @@
+ 		return ''
+ 
+ 	result = '\n'.join("%s='%s'" % (k, v)
+-		for k, v in shellVariables.iteritems()) + '\n'
++		for k, v in shellVariables.items()) + '\n'
+ 
+ 	# Add a variable "revisionVariables" that contains the name of all
+ 	# variables that need to be reevaluated after the revision is known.
+ 	revisionVariables = []
+-	for name, value in shellVariables.iteritems():
++	for name, value in shellVariables.items():
+ 		if '$REVISION' in value:
+ 			revisionVariables.append(name)
+ 	if revisionVariables:
+RefactoringTool: Wrote changes to ./HaikuPorter/ShellScriptlets.py
+RefactoringTool: Refactoring ./HaikuPorter/Repository.py
+RefactoringTool: Refactored ./HaikuPorter/Policy.py
+--- ./HaikuPorter/Policy.py	(original)
++++ ./HaikuPorter/Policy.py	(refactored)
+@@ -84,7 +84,7 @@
+ 		self._checkPostInstallScripts()
+ 
+ 		if self.strict and self.violationEncountered:
+-			sysExit(u"packaging policy violation(s) in strict mode")
++			sysExit("packaging policy violation(s) in strict mode")
+ 
+ 	def _checkTopLevelEntries(self):
+ 		for entry in os.listdir(self.package.packagingDir):
+@@ -256,7 +256,7 @@
+ 
+ 		# The library might be provided by a sibling package.
+ 		providingPackage = None
+-		for packageName in self.portPackagesProvides.iterkeys():
++		for packageName in self.portPackagesProvides.keys():
+ 			packageProvides = self.portPackagesProvides[packageName]
+ 			if resolvableName in packageProvides:
+ 				providingPackage = packageName
+@@ -282,8 +282,8 @@
+ 			# Find out which package the library belongs to.
+ 			providingPackage = self._getPackageProvidingPath(libraryPath)
+ 			if not providingPackage:
+-				print('Warning: failed to determine the package providing "%s"'
+-					% libraryPath)
++				print(('Warning: failed to determine the package providing "%s"'
++					% libraryPath))
+ 				return False
+ 
+ 			# Chop off ".hpkg" and the version part from the file name to get
+RefactoringTool: Wrote changes to ./HaikuPorter/Policy.py
+RefactoringTool: Refactoring ./HaikuPorter/Source.py
+RefactoringTool: Refactoring ./HaikuPorter/SourceFetcher.py
+RefactoringTool: Refactored ./HaikuPorter/SourceFetcher.py
+--- ./HaikuPorter/SourceFetcher.py	(original)
++++ ./HaikuPorter/SourceFetcher.py	(refactored)
+@@ -32,7 +32,7 @@
+ 	# If it doesn't find the 'type' it should extract 'real_uri' and 'rev'
+ 	m = re.match(r'^((?P<type>\w*)\+)?(?P<realUri>.+?)(#(?P<rev>.+))?$', uri)
+ 	if not m or not m.group('realUri'):
+-		sysExit(u"Couldn't parse repository URI " + uri)
++		sysExit("Couldn't parse repository URI " + uri)
+ 
+ 	uriType = m.group('type')
+ 	realUri = m.group('realUri')
+@@ -45,7 +45,7 @@
+ 			uriType = m.group(1)
+ 
+ 	if not uriType:
+-		sysExit(u"Couldn't parse repository type from URI " + realUri)
++		sysExit("Couldn't parse repository type from URI " + realUri)
+ 
+ 	return (uriType, realUri, rev)
+ 
+@@ -117,8 +117,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
+ 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
+@@ -132,8 +132,8 @@
+ 		info(output)
+ 
+ 	def updateToRev(self, rev):
+-		warn(u"Updating of a Bazaar repository to a specific revision has "
+-			 u"not been implemented yet, sorry")
++		warn("Updating of a Bazaar repository to a specific revision has "
++			 "not been implemented yet, sorry")
+ 
+ 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
+ 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
+@@ -153,8 +153,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
+ 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
+@@ -176,8 +176,8 @@
+ 		info(output)
+ 
+ 	def updateToRev(self, rev):
+-		warn(u"Updating of a CVS repository to a specific revision has "
+-			 u"not been implemented yet, sorry")
++		warn("Updating of a CVS repository to a specific revision has "
++			 "not been implemented yet, sorry")
+ 
+ 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
+ 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
+@@ -239,8 +239,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
+ 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
+@@ -257,8 +257,8 @@
+ 		info(output)
+ 
+ 	def updateToRev(self, rev):
+-		warn(u"Updating of a Fossil repository to a specific revision has "
+-			 u"not been implemented yet, sorry")
++		warn("Updating of a Fossil repository to a specific revision has "
++			 "not been implemented yet, sorry")
+ 
+ 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
+ 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
+@@ -277,8 +277,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
+ 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
+@@ -297,13 +297,13 @@
+ 			output = check_output(command, shell=True, cwd=self.fetchTarget)
+ 			info(output)
+ 		except:
+-			print 'trying to fetch revision %s from upstream' % self.rev
++			print('trying to fetch revision %s from upstream' % self.rev)
+ 			command = "git branch | cut -c3-"
+ 			branches = check_output(command, shell=True,
+ 									cwd=self.fetchTarget, stderr=STDOUT).splitlines()
+ 			for branch in branches:
+ 				command = 'git fetch origin %s:%s' % (branch, branch)
+-				print command
++				print(command)
+ 				output = check_output(command, shell=True, cwd=self.fetchTarget)
+ 				info(output)
+ 			# ensure that the revision really is available now
+@@ -359,8 +359,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		warn("UNSAFE SOURCES ARE BAD AND SHOULD NOT BE USED IN PRODUCTION")
+ 		warn("PLEASE MOVE TO A STATIC ARCHIVE DOWNLOAD WITH CHECKSUM ASAP!")
+@@ -440,8 +440,8 @@
+ 
+ 	def fetch(self):
+ 		if not Configuration.shallAllowUnsafeSources():
+-			sysExit(u'Downloading from unsafe sources is disabled in ' +
+-					u'haikuports.conf!')
++			sysExit('Downloading from unsafe sources is disabled in ' +
++					'haikuports.conf!')
+ 
+ 		ensureCommandIsAvailable('svn')
+ 		command = 'svn co --non-interactive --trust-server-cert'
+@@ -452,8 +452,8 @@
+ 		info(output)
+ 
+ 	def updateToRev(self, rev):
+-		warn(u"Updating of a Subversion repository to a specific revision has "
+-			 u"not been implemented yet, sorry")
++		warn("Updating of a Subversion repository to a specific revision has "
++			 "not been implemented yet, sorry")
+ 
+ 	def unpack(self, sourceBaseDir, sourceSubDir, foldSubDir):
+ 		unpackCheckoutWithTar(self.fetchTarget, sourceBaseDir, sourceSubDir,
+@@ -486,4 +486,4 @@
+ 	elif ':' not in lowerUri:
+ 		return SourceFetcherForLocalFile(uri, fetchTarget)
+ 	else:
+-		sysExit(u'The protocol of SOURCE_URI %s is unsupported, sorry.' % uri)
++		sysExit('The protocol of SOURCE_URI %s is unsupported, sorry.' % uri)
+RefactoringTool: Wrote changes to ./HaikuPorter/SourceFetcher.py
+RefactoringTool: Refactored ./HaikuPorter/Repository.py
+--- ./HaikuPorter/Repository.py	(original)
++++ ./HaikuPorter/Repository.py	(refactored)
+@@ -50,9 +50,9 @@
+ 		# check repository format
+ 		formatVersion = self._readFormatVersion()
+ 		if formatVersion > Repository.currentFormatVersion:
+-			sysExit(u'The version of the repository format used in\n\t%s'
+-					u'\nis newer than the one supported by haikuporter.\n'
+-					u'Please upgrade haikuporter.' % self.path)
++			sysExit('The version of the repository format used in\n\t%s'
++					'\nis newer than the one supported by haikuporter.\n'
++					'Please upgrade haikuporter.' % self.path)
+ 
+ 		Port.setRepositoryDir(self.path)
+ 
+@@ -67,11 +67,11 @@
+ 				self._updateRepository()
+ 		else:
+ 			if getOption('noRepositoryUpdate'):
+-				sysExit(u'no or outdated repository found but no update '
+-					u'allowed')
++				sysExit('no or outdated repository found but no update '
++					'allowed')
+ 			if formatVersion < Repository.currentFormatVersion:
+-				warn(u'Found old repository format - repopulating the '
+-					u'repository ...')
++				warn('Found old repository format - repopulating the '
++					'repository ...')
+ 			self._populateRepository(preserveFlags)
+ 			self._writeFormatVersion()
+ 		self._writePortForPackageMaps()
+@@ -97,7 +97,7 @@
+ 			return self._activePorts
+ 
+ 		self._activePorts = []
+-		for portName in self._portVersionsByName.keys():
++		for portName in list(self._portVersionsByName.keys()):
+ 			activePortVersion = self.getActiveVersionOf(portName)
+ 			if not activePortVersion:
+ 				continue
+@@ -122,16 +122,16 @@
+ 			port = self._allPorts[portID]
+ 			if port.hasBrokenRecipe:
+ 				if warnAboutSkippedVersions:
+-					warn(u'skipping %s, as the recipe is broken' % portID)
++					warn('skipping %s, as the recipe is broken' % portID)
+ 					try:
+ 						port.parseRecipeFileRaisingExceptions(True)
+ 					except SystemExit as e:
+-						print e.code
++						print(e.code)
+ 				continue
+ 			if not port.isBuildableOnTargetArchitecture():
+ 				if warnAboutSkippedVersions:
+ 					status = port.statusOnTargetArchitecture
+-					warn((u'skipping %s, as it is %s on the target '
++					warn(('skipping %s, as it is %s on the target '
+ 						+ 'architecture.') % (portID, status))
+ 				continue
+ 			return version
+@@ -162,7 +162,7 @@
+ 			reSearch = re.compile(regExp)
+ 
+ 		ports = []
+-		portNames = self.portVersionsByName.keys()
++		portNames = list(self.portVersionsByName.keys())
+ 		for portName in portNames:
+ 			if not regExp or reSearch.search(portName):
+ 				if returnPortNameVersions:
+@@ -194,7 +194,7 @@
+ 			reSearch = re.compile(regExp)
+ 
+ 		packages = []
+-		packageNames = self._portNameForPackageName.keys()
++		packageNames = list(self._portNameForPackageName.keys())
+ 		for packageName in packageNames:
+ 			if not regExp or reSearch.search(packageName):
+ 				if returnFileNames:
+@@ -271,12 +271,12 @@
+ 							if not self.quiet and not getOption('doBootstrap'):
+ 								otherPort = self._allPorts[versionedName]
+ 								if otherPort.category == '<source-package>':
+-									warn(u'%s/%s	 is overruled by input '
+-										u'source package' % (category,
++									warn('%s/%s	 is overruled by input '
++										'source package' % (category,
+ 											versionedName))
+ 								else:
+-									warn(u'%s/%s	 is overruled by duplicate '
+-										u'in %s - please remove one of them'
++									warn('%s/%s	 is overruled by duplicate '
++										'in %s - please remove one of them'
+ 										% (category, versionedName,
+ 											otherPort.category))
+ 							continue
+@@ -290,14 +290,14 @@
+ 					else:
+ 						# invalid argument
+ 						if not self.quiet:
+-							print("Warning: Couldn't parse port/version info: "
+-								+ recipe)
++							print(("Warning: Couldn't parse port/version info: "
++								+ recipe))
+ 
+ 		# Create ports for the secondary architectures. Not all make sense or
+ 		# are supported, but we won't know until we have parsed the recipe file.
+ 		secondaryArchitectures = Configuration.getSecondaryTargetArchitectures()
+ 		if secondaryArchitectures:
+-			for port in self._allPorts.values():
++			for port in list(self._allPorts.values()):
+ 				for architecture in secondaryArchitectures:
+ 					newPort = Port(port.baseName, port.version, port.category,
+ 						port.baseDir, port.outputDir, self.shellVariables,
+@@ -312,7 +312,7 @@
+ 						self._portVersionsByName[name].append(version)
+ 
+ 		# Sort version list of each port
+-		for portName in self._portVersionsByName.keys():
++		for portName in list(self._portVersionsByName.keys()):
+ 			self._portVersionsByName[portName].sort(cmp=versionCompare)
+ 
+ 	def _initPortForPackageMaps(self):
+@@ -325,7 +325,7 @@
+ 				with open(self._portIdForPackageIdFilePath, 'r') as fh:
+ 					self._portIdForPackageId = json.load(fh)
+ 			except BaseException as e:
+-				print e
++				print(e)
+ 
+ 		self._portNameForPackageName = {}
+ 		if os.path.exists(self._portNameForPackageNameFilePath):
+@@ -333,7 +333,7 @@
+ 				with open(self._portNameForPackageNameFilePath, 'r') as fh:
+ 					self._portNameForPackageName = json.load(fh)
+ 			except BaseException as e:
+-				print e
++				print(e)
+ 
+ 	def _writePortForPackageMaps(self):
+ 		"""Writes dictionaries that map package names/IDs to port
+@@ -344,14 +344,14 @@
+ 				json.dump(self._portIdForPackageId, fh, sort_keys=True,
+ 					indent=4, separators=(',', ' : '))
+ 		except BaseException as e:
+-			print e
++			print(e)
+ 
+ 		try:
+ 			with open(self._portNameForPackageNameFilePath, 'w') as fh:
+ 				json.dump(self._portNameForPackageName, fh, sort_keys=True,
+ 					indent=4, separators=(',', ' : '))
+ 		except BaseException as e:
+-			print e
++			print(e)
+ 
+ 	def _readFormatVersion(self):
+ 		"""Read format version of repository from file"""
+@@ -363,7 +363,7 @@
+ 					data = json.load(fh)
+ 				formatVersion = data.get('formatVersion', 0)
+ 			except BaseException as e:
+-				print e
++				print(e)
+ 		return formatVersion
+ 
+ 	def _writeFormatVersion(self):
+@@ -376,7 +376,7 @@
+ 			with open(self._formatVersionFilePath, 'w') as fh:
+ 				json.dump(data, fh, indent=4, separators=(',', ' : '))
+ 		except BaseException as e:
+-			print e
++			print(e)
+ 
+ 	def _populateRepository(self, preserveFlags):
+ 		"""Remove and refill the repository with all DependencyInfo-files from
+@@ -404,18 +404,18 @@
+ 		# check for all known ports if their recipe has been changed
+ 		if os.path.exists(self.path):
+ 			if not self.quiet:
+-				print 'Checking if any dependency-infos need to be updated ...'
++				print('Checking if any dependency-infos need to be updated ...')
+ 		else:
+ 			os.makedirs(self.path)
+ 			if not self.quiet:
+-				print 'Populating repository ...'
++				print('Populating repository ...')
+ 
+ 		skippedDir = os.path.join(self.path, '.skipped')
+ 		if not os.path.exists(skippedDir):
+ 			os.mkdir(skippedDir)
+ 
+-		for portName in sorted(self._portVersionsByName.keys(),
+-				key=unicode.lower):
++		for portName in sorted(list(self._portVersionsByName.keys()),
++				key=str.lower):
+ 
+ 			if explicitPortVersion and explicitPortVersion['name'] == portName:
+ 				versions = [explicitPortVersion['version']]
+@@ -456,8 +456,8 @@
+ 						touchFile(skippedFlag)
+ 						if not self.quiet:
+ 							status = port.statusOnTargetArchitecture
+-							print(('\t%s is still marked as %s on target '
+-								+ 'architecture') % (portID, status))
++							print((('\t%s is still marked as %s on target '
++								+ 'architecture') % (portID, status)))
+ 						continue
+ 
+ 					if os.path.exists(skippedFlag):
+@@ -469,7 +469,7 @@
+ 						port.unsetFlag('build')
+ 
+ 					if not self.quiet:
+-						print('\tupdating dependency infos of ' + portID)
++						print(('\tupdating dependency infos of ' + portID))
+ 
+ 					port.writeDependencyInfosIntoRepository()
+ 					updatedPorts[portID] = port
+@@ -480,15 +480,15 @@
+ 					touchFile(skippedFlag)
+ 					if not os.path.exists(mainDependencyInfoFile):
+ 						if not self.quiet:
+-							print '\trecipe for %s is still broken:' % portID
+-							print prefixLines('\t', e.code)
++							print('\trecipe for %s is still broken:' % portID)
++							print(prefixLines('\t', e.code))
+ 
+ 		# This also drops mappings for updated ports to remove any possibly
+ 		# removed sub-packages.
+ 		self._removeStalePortForPackageMappings(activePorts)
+ 
+ 		# Add port for package mappings for updated ports.
+-		for portID, port in updatedPorts.iteritems():
++		for portID, port in updatedPorts.items():
+ 			for package in port.packages:
+ 				self._portIdForPackageId[package.versionedName] \
+ 					= port.versionedName
+@@ -508,7 +508,7 @@
+ 		allPorts = self.allPorts
+ 
+ 		if not self.quiet:
+-			print "Looking for stale dependency-infos ..."
++			print("Looking for stale dependency-infos ...")
+ 		dependencyInfos = glob.glob(self.path + '/*.DependencyInfo')
+ 		for dependencyInfo in dependencyInfos:
+ 			dependencyInfoFileName = os.path.basename(dependencyInfo)
+@@ -518,7 +518,7 @@
+ 
+ 			if not portID or portID not in activePorts:
+ 				if not self.quiet:
+-					print '\tremoving ' + dependencyInfoFileName
++					print('\tremoving ' + dependencyInfoFileName)
+ 				os.remove(dependencyInfo)
+ 
+ 				if not getOption('noPackageObsoletion'):
+@@ -534,7 +534,7 @@
+ 		for package in packages:
+ 			packageFileName = os.path.basename(package)
+ 			if not self.quiet:
+-				print '\tobsoleting package ' + packageFileName
++				print('\tobsoleting package ' + packageFileName)
+ 			obsoletePackage = obsoleteDir + '/' + packageFileName
+ 			if not os.path.exists(obsoleteDir):
+ 				os.mkdir(obsoleteDir)
+@@ -544,11 +544,11 @@
+ 		"""drops any port-for-package mappings that refer to non-existing or
+ 		   broken ports"""
+ 
+-		for packageId, portId in self._portIdForPackageId.items():
++		for packageId, portId in list(self._portIdForPackageId.items()):
+ 			if portId not in activePorts:
+ 				del self._portIdForPackageId[packageId]
+ 
+-		for packageName, portName in self._portNameForPackageName.items():
++		for packageName, portName in list(self._portNameForPackageName.items()):
+ 			if portName not in self._portVersionsByName:
+ 				del self._portNameForPackageName[packageName]
+ 				continue
+@@ -637,12 +637,12 @@
+ 		for port in sorted(self.activePorts, key=lambda port: port.name):
+ 			for package in port.packages:
+ 				if verbose:
+-					print('checking package {} of {}'.format(
+-							package.revisionedName, port.versionedName))
++					print(('checking package {} of {}'.format(
++							package.revisionedName, port.versionedName)))
+ 
+ 				try:
+ 					resolver.determineRequiredPackagesFor(
+ 						[package.dependencyInfoFile(self.path)])
+ 				except LookupError as error:
+-					print('{}:\n{}\n'.format(package.revisionedName,
+-							prefixLines('\t', str(error))))
++					print(('{}:\n{}\n'.format(package.revisionedName,
++							prefixLines('\t', str(error)))))
+RefactoringTool: Wrote changes to ./HaikuPorter/Repository.py
+RefactoringTool: Refactoring ./HaikuPorter/__init__.py
+RefactoringTool: Refactored ./HaikuPorter/__init__.py
+--- ./HaikuPorter/__init__.py	(original)
++++ ./HaikuPorter/__init__.py	(refactored)
+@@ -3,4 +3,4 @@
+ # Copyright 2013 Oliver Tappe
+ # Distributed under the terms of the MIT License.
+ 
+-from __version__ import *
++from .__version__ import *
+RefactoringTool: Wrote changes to ./HaikuPorter/__init__.py
+RefactoringTool: Refactoring ./HaikuPorter/__version__.py
+RefactoringTool: No changes to ./HaikuPorter/__version__.py
+RefactoringTool: No changes to ./HaikuPorter/__version__.py
+RefactoringTool: Wrote changes to ./HaikuPorter/__version__.py
+RefactoringTool: Refactored ./HaikuPorter/Source.py
+--- ./HaikuPorter/Source.py	(original)
++++ ./HaikuPorter/Source.py	(refactored)
+@@ -142,8 +142,8 @@
+ 								   + self.fetchTargetName)
+ 						break
+ 				else:
+-					warn(u"Stored SOURCE_URI is no longer in recipe, automatic "
+-						 u"repository update won't work")
++					warn("Stored SOURCE_URI is no longer in recipe, automatic "
++						 "repository update won't work")
+ 					self.sourceFetcher \
+ 						= createSourceFetcher(storedUri, self.fetchTarget)
+ 
+@@ -172,18 +172,18 @@
+ 				if isinstance(e, CalledProcessError):
+ 					info(e.output)
+ 				if uri != self.uris[-1]:
+-					warn((u'Unable to fetch source from %s (error: %s), '
+-						  + u'trying next location.') % (uri, e))
++					warn(('Unable to fetch source from %s (error: %s), '
++						  + 'trying next location.') % (uri, e))
+ 				else:
+-					warn((u'Unable to fetch source from %s (error: %s)')
++					warn(('Unable to fetch source from %s (error: %s)')
+ 						 % (uri, e))
+ 
+ 		# failed to fetch source
+-		sysExit(u'Failed to fetch source from all known locations.')
++		sysExit('Failed to fetch source from all known locations.')
+ 
+ 	def clean(self):
+ 		if os.path.exists(self.fetchTarget):
+-			print 'Removing source %s ...' % self.fetchTarget
++			print('Removing source %s ...' % self.fetchTarget)
+ 			if os.path.isdir(self.fetchTarget):
+ 				shutil.rmtree(self.fetchTarget)
+ 			else:
+@@ -199,7 +199,7 @@
+ 		# Check to see if the source was already unpacked.
+ 		if port.checkFlag('unpack', self.index) and not getOption('force'):
+ 			if not os.path.exists(self.sourceBaseDir):
+-				warn(u'Source dir has changed or been removed, unpacking in new dir')
++				warn('Source dir has changed or been removed, unpacking in new dir')
+ 				port.unsetFlag('unpack', self.index)
+ 			else:
+ 				info('Skipping unpack of ' + self.fetchTargetName)
+@@ -262,20 +262,20 @@
+ 
+ 		if self.checksum is not None:
+ 			if sha256.hexdigest() != self.checksum:
+-				sysExit(u'Expected SHA-256: ' + self.checksum + '\n'
++				sysExit('Expected SHA-256: ' + self.checksum + '\n'
+ 						+ 'Found SHA-256:	 ' + sha256.hexdigest())
+ 		else:
+-			warn(u'----- CHECKSUM TEMPLATE -----')
+-			warn(u'CHECKSUM_SHA256%(index)s="%(digest)s"' % {
++			warn('----- CHECKSUM TEMPLATE -----')
++			warn('CHECKSUM_SHA256%(index)s="%(digest)s"' % {
+ 				"digest": sha256.hexdigest(),
+ 				"index": ("_" + self.index) if self.index != "1" else ""})
+-			warn(u'-----------------------------')
++			warn('-----------------------------')
+ 
+ 		if self.checksum is None:
+ 			if not Configuration.shallAllowUnsafeSources():
+-				sysExit(u'No checksum found in recipe!')
++				sysExit('No checksum found in recipe!')
+ 			else:
+-				warn(u'No checksum found in recipe!')
++				warn('No checksum found in recipe!')
+ 
+ 		port.setFlag('validate', self.index)
+ 
+@@ -339,7 +339,7 @@
+ 			# Apply patches
+ 			for patch in self.patches:
+ 				if not os.path.exists(patch):
+-					sysExit(u'patch file "' + patch + u'" not found.')
++					sysExit('patch file "' + patch + '" not found.')
+ 
+ 				if getOption('noGitRepo'):
+ 					info('Applying patch(set) "%s" ...' % patch)
+@@ -410,10 +410,10 @@
+ 		   during the patch phase"""
+ 
+ 		if not os.path.exists(self.sourceDir):
+-			sysExit(u"Can't extract patchset for " + self.sourceDir
+-					+ u" as the source directory doesn't exist yet")
+-
+-		print 'Extracting patchset for ' + self.fetchTargetName + " to " + patchSetFilePath
++			sysExit("Can't extract patchset for " + self.sourceDir
++					+ " as the source directory doesn't exist yet")
++
++		print('Extracting patchset for ' + self.fetchTargetName + " to " + patchSetFilePath)
+ 		needToRebase = True
+ 		try:
+ 			# check if the tag 'PATCH_FUNCTION' exists
+@@ -445,21 +445,21 @@
+ 
+ 		# warn if there's a correpsonding arch-specific patchset file
+ 		if os.path.exists(archPatchSetFilePath):
+-			warn(u'arch-specific patchset file %s requires manual update'
++			warn('arch-specific patchset file %s requires manual update'
+ 				 % os.path.basename(archPatchSetFilePath))
+ 
+ 		# if there's a corresponding patch file, remove it, as we now have
+ 		# the patchset
+ 		patchFilePath = patchSetFilePath[:-3]
+ 		if os.path.exists(patchFilePath):
+-			warn(u'removing obsolete patch file '
++			warn('removing obsolete patch file '
+ 				 + os.path.basename(patchFilePath))
+ 			os.remove(patchFilePath)
+ 		# if there's a corresponding diff file, remove it, as we now have
+ 		# the patchset
+ 		diffFilePath = patchFilePath[:-6] + '.diff'
+ 		if os.path.exists(diffFilePath):
+-			warn(u'removing obsolete diff file '
++			warn('removing obsolete diff file '
+ 				 + os.path.basename(diffFilePath))
+ 			os.remove(diffFilePath)
+ 
+RefactoringTool: Wrote changes to ./HaikuPorter/Source.py
+RefactoringTool: Refactoring ./doc/conf.py
+RefactoringTool: Refactored ./doc/conf.py
+--- ./doc/conf.py	(original)
++++ ./doc/conf.py	(refactored)
+@@ -48,8 +48,8 @@
+ master_doc = 'index'
+ 
+ # General information about the project.
+-project = u'HaikuPorter'
+-copyright = u'2014, Haiku, Inc.'
++project = 'HaikuPorter'
++copyright = '2014, Haiku, Inc.'
+ 
+ # The version info for the project you're documenting, acts as replacement for
+ # |version| and |release|, also used in various other places throughout the
+@@ -201,8 +201,8 @@
+ # (source start file, target name, title,
+ #  author, documentclass [howto, manual, or own class]).
+ latex_documents = [
+-  ('index', 'HaikuPorter.tex', u'HaikuPorter Documentation',
+-   u'Haiku, Inc.', 'manual'),
++  ('index', 'HaikuPorter.tex', 'HaikuPorter Documentation',
++   'Haiku, Inc.', 'manual'),
+ ]
+ 
+ # The name of an image file (relative to this directory) to place at the top of
+@@ -231,8 +231,8 @@
+ # One entry per manual page. List of tuples
+ # (source start file, name, description, authors, manual section).
+ man_pages = [
+-	('index', 'haikuporter', u'HaikuPorter Documentation',
+-	 [u'Haiku, Inc.'], 1)
++	('index', 'haikuporter', 'HaikuPorter Documentation',
++	 ['Haiku, Inc.'], 1)
+ ]
+ 
+ # If true, show URL addresses after external links.
+@@ -245,8 +245,8 @@
+ # (source start file, target name, title, author,
+ #  dir menu entry, description, category)
+ texinfo_documents = [
+-  ('index', 'HaikuPorter', u'HaikuPorter Documentation',
+-   u'Haiku, Inc.', 'HaikuPorter', 'One line description of project.',
++  ('index', 'HaikuPorter', 'HaikuPorter Documentation',
++   'Haiku, Inc.', 'HaikuPorter', 'One line description of project.',
+    'Miscellaneous'),
+ ]
+ 
+RefactoringTool: Wrote changes to ./doc/conf.py
+RefactoringTool: Refactoring ./HaikuPorter/Utils.py
+RefactoringTool: Refactored ./HaikuPorter/Utils.py
+--- ./HaikuPorter/Utils.py	(original)
++++ ./HaikuPorter/Utils.py	(refactored)
+@@ -19,13 +19,13 @@
+ import zipfile
+ 
+ if sys.stdout.isatty():
+-	colorWarning = u'\033[1;36m'
+-	colorError = u'\033[1;35m'
+-	colorReset = u'\033[1;m'
++	colorWarning = '\033[1;36m'
++	colorError = '\033[1;35m'
++	colorReset = '\033[1;m'
+ else:
+-	colorWarning = u''
+-	colorError = u''
+-	colorReset = u''
++	colorWarning = ''
++	colorError = ''
++	colorReset = ''
+ 
+ # -- MyTarInfo -------------------------------------------------------------
+ 
+@@ -62,14 +62,14 @@
+ def sysExit(message):
+ 	"""wrap invocation of sys.exit()"""
+ 
+-	message = '\n'.join([colorError + u'Error: ' + line + colorReset
++	message = '\n'.join([colorError + 'Error: ' + line + colorReset
+ 		for line in message.split('\n')])
+ 	sys.exit(message.encode('utf-8'))
+ 
+ def warn(message):
+ 	"""print a warning"""
+ 
+-	message = '\n'.join([colorWarning + u'Warning: ' + line + colorReset
++	message = '\n'.join([colorWarning + 'Warning: ' + line + colorReset
+ 		for line in message.split('\n')])
+ 	logging.getLogger("buildLogger").warn(message.encode('utf-8'))
+ 
+@@ -155,11 +155,11 @@
+ 				if os.path.normpath(name).startswith(subdir)
+ 			]
+ 			if not names:
+-				sysExit(u'sub-directory %s not found in archive' % subdir)
++				sysExit('sub-directory %s not found in archive' % subdir)
+ 		zipFile.extractall(targetBaseDir, names)
+ 		zipFile.close()
+ 	else:
+-		sysExit(u'Unrecognized archive type in file '
++		sysExit('Unrecognized archive type in file '
+ 				+ archiveFile)
+ 
+ def symlinkDirectoryContents(sourceDir, targetDir, emptyTargetDirFirst=True):
+@@ -227,7 +227,7 @@
+ 	"""checks if the given command is available and bails if not"""
+ 
+ 	if not isCommandAvailable(command):
+-		sysExit(u"'" + command + u"' is not available, please install it")
++		sysExit("'" + command + "' is not available, please install it")
+ 
+ def naturalCompare(left, right):
+ 	"""performs a natural compare between the two given strings - returns:
+RefactoringTool: Wrote changes to ./HaikuPorter/Utils.py
+RefactoringTool: Refactored ./HaikuPorter/Port.py
+--- ./HaikuPorter/Port.py	(original)
++++ ./HaikuPorter/Port.py	(refactored)
+@@ -1,5 +1,5 @@
+ # -*- coding: utf-8 -*-
+-from __future__ import absolute_import
++
+ #
+ # Copyright 2007-2011 Brecht Machiels
+ # Copyright 2009-2010 Chris Roberts
+@@ -252,7 +252,7 @@
+ 
+ 		## REFACTOR this into a separate method
+ 		if not os.path.exists(self.recipeFilePath):
+-			sysExit(self.name + u' version ' + self.version + u' not found.')
++			sysExit(self.name + ' version ' + self.version + ' not found.')
+ 
+ 		# copy the recipe file and prepare it for use
+ 		if not os.path.exists(os.path.dirname(self.preparedRecipeFile)):
+@@ -277,7 +277,7 @@
+ 		extensions = recipeConfig.extensions
+ 
+ 		if '' not in extensions:
+-			sysExit(u'No base package defined in (in %s)' % self.recipeFilePath)
++			sysExit('No base package defined in (in %s)' % self.recipeFilePath)
+ 
+ 		recipeKeysByExtension = {}
+ 
+@@ -295,7 +295,7 @@
+ 			recipeKeys = {}
+ 
+ 			# check whether all required values are present
+-			for baseKey in recipeAttributes.keys():
++			for baseKey in list(recipeAttributes.keys()):
+ 				if extension:
+ 					key = baseKey + '_' + extension
+ 					# inherit any missing attribute from the respective base
+@@ -320,7 +320,7 @@
+ 				if key not in entries:
+ 					# complain about missing required values
+ 					if recipeAttributes[baseKey]['required']:
+-						sysExit(u"No %s found (in %s)"
++						sysExit("No %s found (in %s)"
+ 								% (key, self.recipeFilePath))
+ 
+ 					# set default value, as no other value has been provided
+@@ -337,7 +337,7 @@
+ 				elif baseKey == 'PATCHES':
+ 					# collect all referenced patches into a single list
+ 					if key in entries and entries[key]:
+-						for index in entries[key].keys():
++						for index in list(entries[key].keys()):
+ 							allPatches += entries[key][index]
+ 
+ 				# store extension-specific value under base key
+@@ -362,8 +362,8 @@
+ 					if (os.path.exists(self.patchesDir + '/' + patchFileName)
+ 						and patchFileName not in allPatches):
+ 						if showWarnings:
+-							warn(u'Patch file %s is not referenced in '
+-								u'PATCHES, so it will not be used'
++							warn('Patch file %s is not referenced in '
++								'PATCHES, so it will not be used'
+ 								% patchFileName)
+ 
+ 		return recipeKeysByExtension, recipeConfig.definedPhases
+@@ -373,34 +373,34 @@
+ 		# The summary must be a single line of text, preferably not
+ 		# exceeding 70 characters in length
+ 		if key not in entries or not entries[key]:
+-			sysExit(u'No %s found (in %s)'
++			sysExit('No %s found (in %s)'
+ 				% (key, self.recipeFilePath))
+ 		if '\n' in entries[key]:
+-			sysExit(u'%s must be a single line of text (%s).'
++			sysExit('%s must be a single line of text (%s).'
+ 					% (key, self.recipeFilePath))
+ 		if entries[key].lower().startswith(self.name):
+-			sysExit(u'%s cannot start with the name of the port (%s).'
++			sysExit('%s cannot start with the name of the port (%s).'
+ 					% (key, self.recipeFilePath))
+ 		if entries[key][0].islower():
+-			sysExit(u'%s must start with a capital letter (%s).'
++			sysExit('%s must start with a capital letter (%s).'
+ 					% (key, self.recipeFilePath))
+ 		if entries[key].endswith('.'):
+-			sysExit(u'%s cannot end in "." (%s).'
++			sysExit('%s cannot end in "." (%s).'
+ 					% (key, self.recipeFilePath))
+ 		if entries[key].count(' ') < 2:
+-			sysExit(u'%s must have at least 3 words (%s).'
++			sysExit('%s must have at least 3 words (%s).'
+ 					% (key, self.recipeFilePath))
+ 		if len(entries[key]) > 80:
+-			sysExit(u'%s exceeds 80 chars (in %s)'
++			sysExit('%s exceeds 80 chars (in %s)'
+ 				% (key, self.recipeFilePath))
+ 
+ 	def _validateDESCRIPTION(self, key, entries, showWarnings):
+ 		"""Validates the 'DESCRIPTION' of the port."""
+ 		if key not in entries or not entries[key]:
+-			sysExit(u'No %s found (in %s)'
++			sysExit('No %s found (in %s)'
+ 				% (key, self.recipeFilePath))
+ 		if 'SUMMARY' in entries and ''.join(entries[key]) == entries['SUMMARY']:
+-			sysExit(u'%s cannot be the same as SUMMARY (in %s)'
++			sysExit('%s cannot be the same as SUMMARY (in %s)'
+ 				% (key, self.recipeFilePath))
+ 
+ 	def _validateLICENSE(self, key, entries, showWarnings):
+@@ -420,46 +420,46 @@
+ 						fileList.append(filename)
+ 				if item not in fileList:
+ 					haikuLicenseList.sort()
+-					sysExit(u'No match found for license ' + item
+-							+ u'\nValid license filenames included '
+-							+ u'with Haiku are:\n'
+-							+ u', '.join(haikuLicenseList)
+-							+ u'\n(in %s)' % (self.recipeFilePath))
++					sysExit('No match found for license ' + item
++							+ '\nValid license filenames included '
++							+ 'with Haiku are:\n'
++							+ ', '.join(haikuLicenseList)
++							+ '\n(in %s)' % (self.recipeFilePath))
+ 		else:
+-			sysExit(u'No %s found (in %s)' % (key, self.recipeFilePath))
++			sysExit('No %s found (in %s)' % (key, self.recipeFilePath))
+ 
+ 	def _validateCOPYRIGHT(self, key, entries, showWarnings):
+ 		"""Validates the 'COPYRIGHT' of the port."""
+ 		# Collect all referenced patches into a single list
+ 		fullCopyright = '\n'.join(entries[key])
+ 		if key not in entries or not entries[key]:
+-			sysExit(u'No %s found (in %s)'
++			sysExit('No %s found (in %s)'
+ 				% (key, self.recipeFilePath))
+ 		elif "@" in fullCopyright:
+-			sysExit(u'%s must not contain e-mail addresses (in %s)'
++			sysExit('%s must not contain e-mail addresses (in %s)'
+ 				% (key, self.recipeFilePath))
+ 		else:
+ 			lowerc = fullCopyright.lower()
+-			if u"copyright" in lowerc or u"(c)" in lowerc or u"©" in lowerc:
+-				sysExit(u'%s must not contain "COPYRIGHT", "(C)", or © (in %s)'
++			if "copyright" in lowerc or "(c)" in lowerc or "©" in lowerc:
++				sysExit('%s must not contain "COPYRIGHT", "(C)", or © (in %s)'
+ 					% (key, self.recipeFilePath))
+ 
+ 	def printDescription(self):
+ 		"""Show port description"""
+ 
+ 		self.parseRecipeFileIfNeeded()
+-		print '*' * 80
+-		print 'VERSION: %s' % self.versionedName
+-		print 'REVISION: %s' % self.revision
+-		print 'HOMEPAGE: %s' % self.recipeKeys['HOMEPAGE']
++		print('*' * 80)
++		print('VERSION: %s' % self.versionedName)
++		print('REVISION: %s' % self.revision)
++		print('HOMEPAGE: %s' % self.recipeKeys['HOMEPAGE'])
+ 		for package in self.allPackages:
+-			print '-' * 80
+-			print 'PACKAGE: %s' % package.versionedName
+-			print 'SUMMARY: %s' % package.recipeKeys['SUMMARY']
+-			print('STATUS: %s'
+-				% package.getStatusOnArchitecture(self.targetArchitecture))
+-			print 'ARCHITECTURE: %s' % package.architecture
+-		print '*' * 80
++			print('-' * 80)
++			print('PACKAGE: %s' % package.versionedName)
++			print('SUMMARY: %s' % package.recipeKeys['SUMMARY'])
++			print(('STATUS: %s'
++				% package.getStatusOnArchitecture(self.targetArchitecture)))
++			print('ARCHITECTURE: %s' % package.architecture)
++		print('*' * 80)
+ 
+ 	@property
+ 	def statusOnTargetArchitecture(self):
+@@ -596,7 +596,7 @@
+ 		except SystemExit:
+ 			return
+ 
+-		warn(u"port %s doesn't seem to be required by %s"
++		warn("port %s doesn't seem to be required by %s"
+ 			% (requiredPort.versionedName, self.versionedName))
+ 
+ 	def getDependencyInfoFiles(self):
+@@ -634,13 +634,13 @@
+ 		"""Clean the working directory"""
+ 
+ 		if os.path.exists(self.workDir):
+-			print 'Cleaning work directory of %s ...' % self.versionedName
++			print('Cleaning work directory of %s ...' % self.versionedName)
+ 			shutil.rmtree(self.workDir)
+ 
+ 	def purge(self):
+ 		"""Clean the working directory and remove downloads"""
+ 
+-		print 'Removing sources of %s ...' % self.versionedName
++		print('Removing sources of %s ...' % self.versionedName)
+ 
+ 		self.parseRecipeFileIfNeeded()
+ 		for source in self.sources:
+@@ -810,7 +810,7 @@
+ 					self.recipeHasBeenParsed = False
+ 
+ 				def failureFunction():
+-					sysExit(u'Build has failed - stopping.')
++					sysExit('Build has failed - stopping.')
+ 
+ 				return {
+ 					'task': taskFunction,
+@@ -862,8 +862,8 @@
+ 							or Configuration.isCrossBuildRepository()
+ 							or getOption('createSourcePackagesForBootstrap')
+ 							or getOption('createSourcePackages')):
+-						warn(u'not grabbing ' + package.hpkgName
+-							+ u', as it has not been built in a chroot.')
++						warn('not grabbing ' + package.hpkgName
++							+ ', as it has not been built in a chroot.')
+ 						continue
+ 					targetPackageFile \
+ 						= hpkgStoragePath + '/' + package.hpkgName
+@@ -880,7 +880,7 @@
+ 		"""Test the port"""
+ 
+ 		if not buildPlatform.isHaiku:
+-			sysExit(u"Sorry, can't execute a test unless running on Haiku")
++			sysExit("Sorry, can't execute a test unless running on Haiku")
+ 
+ 		self.parseRecipeFileIfNeeded()
+ 
+@@ -908,7 +908,7 @@
+ 				self._executeTest()
+ 
+ 			def failureFunction():
+-				sysExit(u'Test has failed - stopping.')
++				sysExit('Test has failed - stopping.')
+ 
+ 			return {
+ 				'task': taskFunction,
+@@ -984,7 +984,7 @@
+ 		self.recipeKeysByExtension, self.definedPhases \
+ 			= self._validateOrLoadFromCache(showWarnings)
+ 		self.recipeKeys = {}
+-		for entries in self.recipeKeysByExtension.values():
++		for entries in list(self.recipeKeysByExtension.values()):
+ 			self.recipeKeys.update(entries)
+ 
+ 		# initialize variables that depend on the recipe revision
+@@ -998,7 +998,7 @@
+ 		basedOnSourcePackage = False
+ 		## REFACTOR it looks like this method should be setup and dispatch
+ 
+-		for index in sorted(keys['SOURCE_URI'].keys(), cmp=naturalCompare):
++		for index in sorted(list(keys['SOURCE_URI'].keys()), cmp=naturalCompare):
+ 			source = Source(self, index, keys['SOURCE_URI'][index],
+ 							keys['SOURCE_FILENAME'].get(index, None),
+ 							keys['CHECKSUM_SHA256'].get(index, None),
+@@ -1185,7 +1185,7 @@
+ 			'sysconfDir': portPackageLinksDir + '/.settings',
+ 		}
+ 
+-		for name, value in relativeConfigureDirs.iteritems():
++		for name, value in relativeConfigureDirs.items():
+ 			relativeName = 'relative' + name[0].upper() + name[1:]
+ 			self.shellVariables[relativeName] = value
+ 			configureDirs[name] = prefix + '/' + value
+@@ -1195,19 +1195,19 @@
+ 		# add one more variable containing all the dir args for configure:
+ 		self.shellVariables['configureDirArgs'] \
+ 			= ' '.join('--%s=%s' % (k.lower(), v)
+-				for k, v in configureDirs.iteritems())
++				for k, v in configureDirs.items())
+ 
+ 		# add one more variable containing all the dir args for CMake:
+ 		cmakeDirArgs = {}
+-		for k, v in configureDirs.iteritems():
++		for k, v in configureDirs.items():
+ 			cmakeDirArgs[k.upper()] = v
+ 		self.shellVariables['cmakeDirArgs'] \
+ 			= ' '.join('-DCMAKE_INSTALL_%s=%s' % (k, v)
+-				for k, v in cmakeDirArgs.iteritems())
++				for k, v in cmakeDirArgs.items())
+ 
+ 		# add another one with the list of possible variables
+ 		self.shellVariables['configureDirVariables'] \
+-			= ' '.join(configureDirs.iterkeys())
++			= ' '.join(iter(configureDirs.keys()))
+ 
+ 		# Add variables for other standard directories. Consequently, we should
+ 		# use finddir to get them (also for the configure variables above), but
+@@ -1226,7 +1226,7 @@
+ 			'settingsDir': 'settings',
+ 		}
+ 
+-		for name, value in relativeOtherDirs.iteritems():
++		for name, value in relativeOtherDirs.items():
+ 			relativeName = 'relative' + name[0].upper() + name[1:]
+ 			self.shellVariables[relativeName] = value
+ 			self.shellVariables[name] = prefix + '/' + value
+@@ -1275,19 +1275,19 @@
+ 				if childStatus != 0:
+ 					if 'failure' in chrootFunctions:
+ 						chrootFunctions['failure']()
+-					sysExit(u'chroot-task failed')
++					sysExit('chroot-task failed')
+ 				if 'success' in chrootFunctions:
+ 					chrootFunctions['success']()
+ 		except KeyboardInterrupt:
+ 			if pid > 0:
+-				print '*** interrupted - stopping child process'
++				print('*** interrupted - stopping child process')
+ 				try:
+ 					os.kill(pid, signal.SIGINT)
+ 					os.waitpid(pid, 0)
+ 				except:
+ 					pass
+-				print '*** child stopped'
+-				sysExit(u'Interrupted.')
++				print('*** child stopped')
++				sysExit('Interrupted.')
+ 
+ 	def _getNeededPackages(self, packagesPath, requiresTypes, description,
+ 		forTestPhase=False):
+@@ -1514,14 +1514,14 @@
+ 				if package.type != PackageType.SOURCE:
+ 					package.activateBuildPackage()
+ 
+-		print 'Testing ...'
++		print('Testing ...')
+ 		self._doRecipeAction(Phase.TEST, self.sourceDir)
+ 
+ 	def _doRecipeAction(self, action, targetDir):
+ 		"""Run the specified action, as defined in the recipe file"""
+ 
+ 		if getOption('enterChroot'):
+-			print "opening chroot shell for " + action
++			print("opening chroot shell for " + action)
+ 			ps1 = action + '-chroot:' + os.environ['PS1']
+ 			self._openShell([], self.sourceDir, {'PS1': ps1})
+ 			return
+@@ -1590,9 +1590,9 @@
+ 			if getOption('buildMaster'):
+ 				raise
+ 
+-			sysExit((u'unable to resolve %s for %s\n'
+-				+ u'\tdependency-infos:\n\t\t%s\n'
+-				+ u'\trepositories:\n\t\t%s\n')
++			sysExit(('unable to resolve %s for %s\n'
++				+ '\tdependency-infos:\n\t\t%s\n'
++				+ '\trepositories:\n\t\t%s\n')
+ 				% (description, self.versionedName,
+ 					'\n\t\t'.join(dependencyInfoFiles), repositories))
+ 
+@@ -1602,7 +1602,7 @@
+ 		sourceKeys = {}
+ 		baseKeys = self.recipeKeysByExtension['']
+ 		recipeAttributes = getRecipeAttributes()
+-		for key in baseKeys.keys():
++		for key in list(baseKeys.keys()):
+ 			if recipeAttributes[key]['extendable'] != Extendable.NO:
+ 				sourceKeys[key] = recipeAttributes[key]['default']
+ 			else:
+RefactoringTool: Wrote changes to ./HaikuPorter/Port.py
+RefactoringTool: No files need to be modified.
