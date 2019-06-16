@@ -134,7 +134,6 @@ def unpackArchive(archiveFile, targetBaseDir, subdir):
 			def filterByDir(members):
 				for member in members:
 					member = copy.copy(member)
-					member.name = member.name.decode("utf-8")
 					if (os.path.normpath(member.name).startswith(subdir)
 							and not os.path.normpath(member.name).endswith("/.git")):
 						if hasattr(os, "geteuid") and os.geteuid() == 0:
