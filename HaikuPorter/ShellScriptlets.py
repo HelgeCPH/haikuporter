@@ -22,45 +22,48 @@ scriptletPrerequirements = r'''
 	cmd:xres
 '''
 
+
 def getScriptletPrerequirements(targetMachineTripleAsName=None):
-	"""Returns the list of prerequirements for executing scriptlets.
-	   If targetMachineTriple is given, the prerequirements will be specialized
-	   for cross-building for the given target machine."""
+    """Returns the list of prerequirements for executing scriptlets.
+       If targetMachineTriple is given, the prerequirements will be specialized
+       for cross-building for the given target machine."""
 
-	targetMachinePrefix \
-		= (targetMachineTripleAsName + '_') if targetMachineTripleAsName else ''
+    targetMachinePrefix = (
+        targetMachineTripleAsName +
+        '_') if targetMachineTripleAsName else ''
 
-	prerequirements = Template(scriptletPrerequirements).substitute({
-		'targetMachinePrefix': targetMachinePrefix,
-	}).splitlines()
+    prerequirements = Template(scriptletPrerequirements).substitute({
+        'targetMachinePrefix': targetMachinePrefix,
+    }).splitlines()
 
-	result = []
-	for prerequirement in prerequirements:
-		prerequirement = prerequirement.partition('#')[0].strip()
-		if prerequirement:
-			result.append(prerequirement)
+    result = []
+    for prerequirement in prerequirements:
+        prerequirement = prerequirement.partition('#')[0].strip()
+        if prerequirement:
+            result.append(prerequirement)
 
-	return result
+    return result
+
 
 def getShellVariableSetters(shellVariables):
-	"""Converts a dict {variableName -> value} to a string with shell code to
-	   set the variables to the respective value."""
-	if not shellVariables:
-		return ''
+    """Converts a dict {variableName -> value} to a string with shell code to
+       set the variables to the respective value."""
+    if not shellVariables:
+        return ''
 
-	result = '\n'.join("%s='%s'" % (k, v)
-		for k, v in shellVariables.items()) + '\n'
+    result = '\n'.join("%s='%s'" % (k, v)
+                       for k, v in shellVariables.items()) + '\n'
 
-	# Add a variable "revisionVariables" that contains the name of all
-	# variables that need to be reevaluated after the revision is known.
-	revisionVariables = []
-	for name, value in shellVariables.items():
-		if '$REVISION' in value:
-			revisionVariables.append(name)
-	if revisionVariables:
-		result += 'revisionVariables="' + ' '.join(revisionVariables) + '"\n'
+    # Add a variable "revisionVariables" that contains the name of all
+    # variables that need to be reevaluated after the revision is known.
+    revisionVariables = []
+    for name, value in shellVariables.items():
+        if '$REVISION' in value:
+            revisionVariables.append(name)
+    if revisionVariables:
+        result += 'revisionVariables="' + ' '.join(revisionVariables) + '"\n'
 
-	return result
+    return result
 
 
 # -----------------------------------------------------------------------------

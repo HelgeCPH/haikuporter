@@ -7,18 +7,18 @@
 # -- Compatibility Check ------------------------------------------------------
 
 # TODO: use 'python2' in the shebang once we have that symlink on Haiku
+import logging
+from HaikuPorter.Options import parseOptions
+from HaikuPorter.Main import Main
 import sys
 if sys.version_info.major != 3:
-	sys.exit('Sorry, haikuporter currently requires Python 3')
+    sys.exit('Sorry, haikuporter currently requires Python 3')
 
 # -- Modules ------------------------------------------------------------------
 
-from HaikuPorter.Main import Main
-from HaikuPorter.Options import parseOptions
 
 # -- Start --------------------------------------------------------------------
 
-import logging
 logger = logging.getLogger("buildLogger")
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
