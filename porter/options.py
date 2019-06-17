@@ -14,7 +14,7 @@
 # -- Modules ------------------------------------------------------------------
 
 from .__version__ import __version__
-from .Utils import isCommandAvailable, warn
+from .utils import isCommandAvailable, warn
 
 from optparse import OptionParser
 from multiprocessing import cpu_count

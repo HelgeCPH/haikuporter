@@ -5,11 +5,11 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .DependencyResolver import DependencyResolver
-from .PackageInfo import PackageInfo
-from .Options import getOption
-from .Utils import info, prefixLines, sysExit, versionCompare, warn
+from .configuration import Configuration
+from .dependencyresolver import DependencyResolver
+from .packageinfo import PackageInfo
+from .options import getOption
+from .utils import info, prefixLines, sysExit, versionCompare, warn
 
 import glob
 import hashlib

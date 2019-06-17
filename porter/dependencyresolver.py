@@ -9,11 +9,11 @@ import os
 import re
 from subprocess import CalledProcessError, check_output
 
-from .Options import getOption
-from .PackageInfo import PackageInfo, ResolvableExpression
-from .ProvidesManager import ProvidesManager
-from .ShellScriptlets import getScriptletPrerequirements
-from .Utils import printError, sysExit, warn
+from .options import getOption
+from .packageinfo import PackageInfo, ResolvableExpression
+from .providesmanager import ProvidesManager
+from .shellscriptlets import getScriptletPrerequirements
+from .utils import printError, sysExit, warn
 
 
 class RestartDependencyResolutionException(Exception):

@@ -6,11 +6,11 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .ConfigParser import ConfigParser
-from .Configuration import Configuration
-from .Options import getOption
-from .Port import Port
-from .Utils import ensureCommandIsAvailable, sysExit, warn
+from .configparser import ConfigParser
+from .configuration import Configuration
+from .options import getOption
+from .port import Port
+from .utils import ensureCommandIsAvailable, sysExit, warn
 
 import errno
 import json

@@ -12,13 +12,13 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .BuildPlatform import buildPlatform
-from .ConfigParser import ConfigParser
-from .Configuration import Configuration
-from .Options import getOption
-from .RecipeTypes import Architectures, Status
-from .ShellScriptlets import getScriptletPrerequirements
-from .Utils import (
+from .buildplatform import buildPlatform
+from .configparser import ConfigParser
+from .configuration import Configuration
+from .options import getOption
+from .recipetypes import Architectures, Status
+from .shellscriptlets import getScriptletPrerequirements
+from .utils import (
     ensureCommandIsAvailable,
     escapeForPackageInfo,
     haikuporterRepoUrl,

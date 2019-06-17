@@ -5,9 +5,9 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .ConfigParser import ConfigParser
-from .Configuration import Configuration
-from .Utils import isCommandAvailable, sysExit, warn
+from .configparser import ConfigParser
+from .configuration import Configuration
+from .utils import isCommandAvailable, sysExit, warn
 
 from subprocess import check_output
 import os

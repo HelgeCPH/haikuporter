@@ -9,7 +9,7 @@
 from subprocess import CalledProcessError, check_output
 import types
 
-from .RecipeTypes import (
+from .recipetypes import (
     Architectures,
     Extendable,
     LinesOfText,
@@ -20,11 +20,11 @@ from .RecipeTypes import (
     Status,
     YesNo,
 )
-from .ShellScriptlets import (
+from .shellscriptlets import (
     configFileEvaluatorScript,
     getShellVariableSetters,
 )
-from .Utils import (
+from .utils import (
     filteredEnvironment,
     sysExit,
     warn,

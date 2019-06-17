@@ -6,11 +6,11 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from . import BuildPlatform
-from .Configuration import Configuration
-from .Options import getOption
-from .PackageInfo import PackageInfo, Resolvable
-from .Utils import versionCompare
+from .buildplatform import buildPlatform
+from .configuration import Configuration
+from .options import getOption
+from .packageinfo import PackageInfo, Resolvable
+from .utils import versionCompare
 
 # -- ProvidesInfo class -------------------------------------------------------
 
@@ -35,7 +35,7 @@ class ProvidesManager(object):
     def __init__(self):
         self._providesMap = {}
         self._providesSourceMap = {}
-        self.architectures = [BuildPlatform.buildPlatform.targetArchitecture,
+        self.architectures = [buildPlatform.targetArchitecture,
                               'any', 'source']
 
     def addProvidesFromPackage(self, package):

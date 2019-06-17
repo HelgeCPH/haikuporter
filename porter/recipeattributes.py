@@ -12,8 +12,8 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Package import PackageType
-from .RecipeTypes import (Architectures, Extendable, LinesOfText,
+from .package import PackageType
+from .recipetypes import (Architectures, Extendable, LinesOfText,
                           Phase, ProvidesList, RequiresList, YesNo)
 import copy
 import types

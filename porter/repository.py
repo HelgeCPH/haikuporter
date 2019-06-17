@@ -5,11 +5,11 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .DependencyResolver import DependencyResolver
-from .Options import getOption
-from .Port import Port
-from .Utils import prefixLines, sysExit, touchFile, versionCompare, warn
+from .configuration import Configuration
+from .dependencyresolver import DependencyResolver
+from .options import getOption
+from .port import Port
+from .utils import prefixLines, sysExit, touchFile, versionCompare, warn
 
 import codecs
 import functools

@@ -5,8 +5,8 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .Utils import sysExit
+from .configuration import Configuration
+from .utils import sysExit
 
 from copy import deepcopy
 from subprocess import check_output

@@ -12,16 +12,16 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .BuildPlatform import buildPlatform
-from .Configuration import Configuration
-from .DependencyAnalyzer import DependencyAnalyzer
-from .Options import getOption
-from .Policy import Policy
-from .PackageRepository import PackageRepository
-from .RecipeAttributes import getRecipeFormatVersion
-from .RecipeTypes import MachineArchitecture
-from .Repository import Repository
-from .Utils import ensureCommandIsAvailable, haikuportsRepoUrl, sysExit, warn
+from .buildplatform import buildPlatform
+from .configuration import Configuration
+from .dependencyanalyzer import DependencyAnalyzer
+from .options import getOption
+from .policy import Policy
+from .packagerepository import PackageRepository
+from .recipeattributes import getRecipeFormatVersion
+from .recipetypes import MachineArchitecture
+from .repository import Repository
+from .utils import ensureCommandIsAvailable, haikuportsRepoUrl, sysExit, warn
 
 import os
 import re
@@ -107,7 +107,7 @@ class Main(object):
         self._initGlobalShellVariables()
 
         if self.options.buildMaster:
-            from .BuildMaster import BuildMaster
+            from .buildmaster import BuildMaster
             self.buildMaster = BuildMaster(self.treePath, self.packagesPath,
                                            self.options)
 

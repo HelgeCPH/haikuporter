@@ -24,30 +24,30 @@ from subprocess import check_call, check_output, CalledProcessError, Popen, \
     PIPE, STDOUT
 import traceback
 
-from .BuildPlatform import buildPlatform
-from .ConfigParser import ConfigParser
-from .Configuration import Configuration
-from .Options import getOption
-from .Package import (
+from .buildplatform import buildPlatform
+from .configparser import ConfigParser
+from .configuration import Configuration
+from .options import getOption
+from .package import (
     PackageType,
     sourcePackageFactory,
     packageFactory,
 )
-from .RecipeAttributes import getRecipeAttributes
-from .RecipeTypes import (
+from .recipeattributes import getRecipeAttributes
+from .recipetypes import (
     Extendable,
     MachineArchitecture,
     Phase,
     Status)
-from .RequiresUpdater import RequiresUpdater
-from .ShellScriptlets import (
+from .requiresupdater import RequiresUpdater
+from .shellscriptlets import (
     cleanupChrootScript,
     getShellVariableSetters,
     recipeActionScript,
     setupChrootScript,
 )
-from .Source import Source
-from .Utils import (
+from .source import Source
+from .utils import (
     filteredEnvironment,
     info,
     naturalCompare,

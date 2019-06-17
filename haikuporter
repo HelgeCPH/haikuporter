@@ -8,8 +8,8 @@
 
 # TODO: use 'python2' in the shebang once we have that symlink on Haiku
 import logging
-from HaikuPorter.Options import parseOptions
-from HaikuPorter.Main import Main
+from porter.options import parseOptions
+from porter.main import Main
 import sys
 if sys.version_info.major != 3:
     sys.exit('Sorry, haikuporter currently requires Python 3')

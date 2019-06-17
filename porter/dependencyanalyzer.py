@@ -6,12 +6,12 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .BuildPlatform import buildPlatform
-from .Options import getOption
-from .PackageInfo import (PackageInfo, ResolvableExpression)
-from .ProvidesManager import ProvidesManager
-from .ShellScriptlets import getScriptletPrerequirements
-from .Utils import sysExit
+from .buildplatform import buildPlatform
+from .options import getOption
+from .packageinfo import (PackageInfo, ResolvableExpression)
+from .providesmanager import ProvidesManager
+from .shellscriptlets import getScriptletPrerequirements
+from .utils import sysExit
 
 import copy
 import os

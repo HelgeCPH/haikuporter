@@ -12,8 +12,8 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .Utils import ensureCommandIsAvailable, info, sysExit, unpackArchive, warn
+from .configuration import Configuration
+from .utils import ensureCommandIsAvailable, info, sysExit, unpackArchive, warn
 
 import os
 import re

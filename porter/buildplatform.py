@@ -5,12 +5,12 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .DependencyResolver import DependencyResolver
-from .Options import getOption
-from .PackageInfo import PackageInfo
-from .RecipeTypes import Architectures, MachineArchitecture
-from .Utils import sysExit, info
+from .configuration import Configuration
+from .dependencyresolver import DependencyResolver
+from .options import getOption
+from .packageinfo import PackageInfo
+from .recipetypes import Architectures, MachineArchitecture
+from .utils import sysExit, info
 
 import os
 import platform

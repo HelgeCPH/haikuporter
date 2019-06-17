@@ -6,10 +6,10 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .ConfigParser import ConfigParser
-from .Options import getOption
-from .RecipeTypes import (Extendable, MachineArchitecture, YesNo)
-from .Utils import sysExit
+from .configparser import ConfigParser
+from .options import getOption
+from .recipetypes import (Extendable, MachineArchitecture, YesNo)
+from .utils import sysExit
 
 import os
 import re

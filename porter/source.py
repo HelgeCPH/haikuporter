@@ -12,11 +12,11 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .Configuration import Configuration
-from .Options import getOption
-from .SourceFetcher import (createSourceFetcher, foldSubdirIntoSourceDir,
+from .configuration import Configuration
+from .options import getOption
+from .sourcefetcher import (createSourceFetcher, foldSubdirIntoSourceDir,
                             parseCheckoutUri)
-from .Utils import (ensureCommandIsAvailable, info, readStringFromFile,
+from .utils import (ensureCommandIsAvailable, info, readStringFromFile,
                     storeStringInFile, sysExit, warn)
 
 import hashlib

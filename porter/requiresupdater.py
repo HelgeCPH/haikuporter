@@ -5,9 +5,9 @@
 
 # -- Modules ------------------------------------------------------------------
 
-from .PackageInfo import PackageInfo, Resolvable, ResolvableExpression
-from .ProvidesManager import ProvidesManager
-from .Utils import sysExit
+from .packageinfo import PackageInfo, Resolvable, ResolvableExpression
+from .providesmanager import ProvidesManager
+from .utils import sysExit
 
 import os
 from subprocess import CalledProcessError
